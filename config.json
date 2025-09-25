@@ -1,6 +1,6 @@
 {
     "blacklist": {
-        "invidivual": [
+        "individual": [
             "TrackingTypeProxy",
             "CgeSmiling",
             "VRModeProxy",

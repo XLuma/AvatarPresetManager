@@ -34,6 +34,10 @@ class AvatarParameter():
         self.path = path
         self.value = value[0] #since its passed as an array from osc
         pass
+    def __repr__(self):
+        return f"AvatarParameter(name={self.name!r}, value={self.value}, path={self.path})"
+    def to_dict(self):
+        return {"name": self.name, "path": self.path, "value": self.value}
 
 class VRCClient():
     def __init__(self, oscqPort):
@@ -61,13 +65,13 @@ class VRCClient():
         """
         Returns the current avatar ID, name, author, etc. from OSCQuery root.
         """
-        print(self.currentAvatarRaw)
+        self.get_root_node()
         avatarChange = self.currentAvatarRaw["CONTENTS"]["avatar"]["CONTENTS"]["change"]
         avatarId = avatarChange.get("VALUE")[0]
         return avatarId
     def get_avatar_params(self) -> list[AvatarParameter]:
         """
-        Returns the
+        Returns a list of avatar parameters
         """
         self.get_root_node() # Refresh data
         avatar_node = self.currentAvatarRaw["CONTENTS"]["avatar"]["CONTENTS"]["parameters"]
@@ -86,22 +90,38 @@ class AvatarPreset():
         self.uniqueKey = ""
         self.parameters: list[AvatarParameter] = data
         pass
-    def output(self):
-        pass
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "avatarId": self.avatarId,
+            "uniqueKey": self.uniqueKey,
+            "parameters": [p.to_dict() for p in self.parameters],
+        }
+        
 
 # we could save shit like. avatar: object, then key: paramname, then
 class AvatarManager():
     def __init__(self):
-        self.paramBlacklist = []
+        config = self.read_config()
+        self.blacklistIndividual: list[str] = config['blacklist']['individual']
+        self.blacklistPartial: list[str] = config['blacklist']['partial']
         pass
-    def save_avatar_state(self, avatarId, presetName, parameters):
-        
+    def read_config(self):
+        file = open("config.json", "r")
+        config = json.load(file)
+        print(config)
+        file.close()
+        return config
+    def save_avatar_state(self, preset: AvatarPreset):
+        with open(preset.avatarId + ".json", 'w') as file:
+            json.dump(preset.to_dict(), file, indent=2)
         pass
     def apply_avatar_state(self):
         pass
 
 def main():
     oscqService = OscQueryDiscovery()
+    avatarManager = AvatarManager()
     try:
         if not oscqService.wait(10):
             print("bruh")
@@ -109,6 +129,11 @@ def main():
         print(oscqService.ip)
         print(oscqService.port)
         client = VRCClient(oscqPort=oscqService.port)
+        avId = client.get_avatar_id()
+        print(client.get_avatar_params())
+        preset = AvatarPreset("testPreset1", client.get_avatar_id(), client.get_avatar_params())
+        #avatarManager.save_avatar_state(preset)
+        
         pass
     finally:
         oscqService.stop()
