@@ -1,0 +1,94 @@
+from pythonosc.dispatcher import Dispatcher
+from pythonosc.udp_client import SimpleUDPClient
+import requests
+import os
+import threading
+import schedule
+import time
+import json
+import xsnotif
+import pytimedinput
+
+class VRCClient():
+    def __init__(self):
+        self.ip = "127.0.0.1"
+        self.port = 9000 #vrchat expects messages over there
+        self.client = SimpleUDPClient(self.ip, self.port)
+        self.oscqport = 61344
+        self.currentAvatarRaw = {}
+        #some code to get the config ? maybe ?
+    def send_param_change(self, path, param):
+        """
+        Will send a message to VRChat with OSC. Returns nothing.
+        """
+        self.client.send_message(path, param) #should work for any type of parameter
+    def get_root_node(self):
+        """
+        Gets the current avatar state, and returns it. Can be retrieved with the currentAvatarRaw attribute
+        """
+        req = requests.get(f'http://{self.ip}:{self.oscqport}')
+        req.raise_for_status()
+        data = req.json()
+        self.currentAvatarRaw = data
+        return data
+    def get_avatar_id(self):
+        """
+        Returns the current avatar ID, name, author, etc. from OSCQuery root.
+        """
+        print(self.currentAvatarRaw)
+        avatarChange = self.currentAvatarRaw["CONTENTS"]["avatar"]["CONTENTS"]["change"]
+        avatarId = avatarChange.get("VALUE")[0]
+        return avatarId
+    def get_avatar_params(self):
+        pass
+
+class AvatarPreset():
+    def __init__(self, name, avatarId, data):
+        self.name = name
+        self.avatarId = avatarId
+        self.uniqueKey = ""
+        self.data = data
+        pass
+    def output(self):
+        pass
+# we could save shit like. avatar: object, then key: paramname, then
+class AvatarManager():
+    def __init__(self):
+        self.paramBlacklist = []
+        pass
+    def save_avatar_state(self, avatarId, presetName, parameters):
+        
+        pass
+    def apply_avatar_state(self):
+        pass
+
+def walk_node(node, prefix=""):
+    """Recursively walk the OSCQuery tree and yield parameter info."""
+    if "CONTENTS" in node:
+        for name, sub in node["CONTENTS"].items():
+            yield from walk_node(sub, prefix + name)
+    else:
+        # Leaf node: should have TYPE/DEFAULT/etc.
+        info = {
+            "path": prefix,
+            "type": node.get("TYPE"),
+            "default": node.get("DEFAULT"),
+            "range": node.get("RANGE"),
+            "tags": node.get("TAGS"),
+            "value": node.get("VALUE")
+        }
+        yield info
+
+def main():
+    client = VRCClient()
+    root = client.get_root_node()
+    avatar_node = root["CONTENTS"]["avatar"]["CONTENTS"]["parameters"]
+    #print(avatar_node)
+    params = list(walk_node(avatar_node, "/avatar/parameters/"))
+    print("avatar id",client.get_avatar_id())
+    print("Parameters found:")
+    for p in params:
+        print(f"{p['path']} (type={p['type']}, default={p['default']}, range={p['range']}, value={p['value']})")
+
+if __name__ == "__main__":
+    main()
