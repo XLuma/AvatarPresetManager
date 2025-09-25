@@ -36,11 +36,11 @@ class AvatarParameter():
         pass
 
 class VRCClient():
-    def __init__(self):
+    def __init__(self, oscqPort):
         self.ip = "127.0.0.1"
         self.port = 9000 #vrchat expects messages over there
         self.client = SimpleUDPClient(self.ip, self.port)
-        self.oscqport = 54074
+        self.oscqport = oscqPort
         self.currentAvatarRaw = {}
         #some code to get the config ? maybe ?
     def send_param_change(self, path, param):
@@ -101,7 +101,6 @@ class AvatarManager():
         pass
 
 def main():
-    client = VRCClient()
     oscqService = OscQueryDiscovery()
     try:
         if not oscqService.wait(10):
@@ -109,6 +108,7 @@ def main():
             sys.exit(1)
         print(oscqService.ip)
         print(oscqService.port)
+        client = VRCClient(oscqPort=oscqService.port)
         pass
     finally:
         oscqService.stop()
