@@ -5,7 +5,7 @@ from zeroconf import ServiceBrowser, ServiceStateChange, Zeroconf
 class OscQueryDiscovery():
     def __init__(self):
         """
-        Initiates a new OscQueryDiscovery. On initialization, will attempt to discover a OSCQuery service running. Blocking.
+        Initiates a new OscQueryDiscovery.
         """
         print("Hello")
         self.__zeroconf = Zeroconf()
