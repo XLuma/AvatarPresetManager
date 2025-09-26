@@ -3,6 +3,5 @@ This piece of software allows you to create snapshots of your avatar state, and 
 
 ## TODO
 - Proper format for presets
-- Restore parameters
 - Implement blacklist fully
 - Add UI
