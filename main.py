@@ -105,6 +105,7 @@ class AvatarManager():
         config = self.read_config()
         self.blacklistIndividual: list[str] = config['blacklist']['individual']
         self.blacklistPartial: list[str] = config['blacklist']['partial']
+        self.presets = list[AvatarPreset]
         pass
     def read_config(self):
         file = open("config.json", "r")
@@ -115,8 +116,8 @@ class AvatarManager():
     def save_avatar_state(self, preset: AvatarPreset):
         with open(preset.avatarId + ".json", 'w') as file:
             json.dump(preset.to_dict(), file, indent=2)
-        pass
-    def apply_avatar_state(self):
+        
+    def apply_avatar_state(self, preset):
         pass
 
 def main():
@@ -133,7 +134,7 @@ def main():
         print(client.get_avatar_params())
         preset = AvatarPreset("testPreset1", client.get_avatar_id(), client.get_avatar_params())
         #avatarManager.save_avatar_state(preset)
-        
+
         pass
     finally:
         oscqService.stop()
