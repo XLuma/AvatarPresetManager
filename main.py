@@ -15,16 +15,18 @@ def walk_node(node, prefix=""):
     """Recursively walk the OSCQuery tree and yield parameter info."""
     if "CONTENTS" in node:
         for name, sub in node["CONTENTS"].items():
-            yield from walk_node(sub, prefix + name)
+            # ensure separator
+            new_prefix = f"{prefix}/{name}" if prefix else name
+            yield from walk_node(sub, new_prefix)
     else:
-        # Leaf node: should have TYPE/DEFAULT/etc.
+        # Leaf node
         info = {
             "path": prefix,
             "type": node.get("TYPE"),
             "default": node.get("DEFAULT"),
             "range": node.get("RANGE"),
             "tags": node.get("TAGS"),
-            "value": node.get("VALUE")
+            "value": node.get("VALUE"),
         }
         yield info
 
@@ -32,12 +34,17 @@ class AvatarParameter():
     def __init__(self, name, path, value):
         self.name = name
         self.path = path
-        self.value = value[0] #since its passed as an array from osc
+        if type(value) is list:
+            self.value = value[0] #since its passed as an array from osc
+        else:
+            self.value = value
         pass
     def __repr__(self):
         return f"AvatarParameter(name={self.name!r}, value={self.value}, path={self.path})"
     def to_dict(self):
         return {"name": self.name, "path": self.path, "value": self.value}
+    def from_dict(d: dict) -> "AvatarParameter":
+        return AvatarParameter(name=d["name"], value=d["value"], path=d["path"])
 
 class VRCClient():
     def __init__(self, oscqPort):
@@ -75,20 +82,20 @@ class VRCClient():
         """
         self.get_root_node() # Refresh data
         avatar_node = self.currentAvatarRaw["CONTENTS"]["avatar"]["CONTENTS"]["parameters"]
-        params = list(walk_node(avatar_node, "/avatar/parameters/"))
+        params = list(walk_node(avatar_node, "/avatar/parameters"))
         paramList: list[AvatarParameter] = []
         for p in params:
-            paramName = p['path'].split("/", 3)[-1] #strip /avatar/parameters/
+            paramName = str(p['path']).split("/")[-1] #strip path prefix
             param = AvatarParameter(paramName, p['path'], p['value'])
             paramList.append(param)
         return paramList
 
 class AvatarPreset():
-    def __init__(self, name, avatarId, data):
+    def __init__(self, name, avatarId, parameters):
         self.name = name
         self.avatarId = avatarId
         self.uniqueKey = ""
-        self.parameters: list[AvatarParameter] = data
+        self.parameters: list[AvatarParameter] = parameters
         pass
     def to_dict(self):
         return {
@@ -97,32 +104,50 @@ class AvatarPreset():
             "uniqueKey": self.uniqueKey,
             "parameters": [p.to_dict() for p in self.parameters],
         }
+    def from_dict(d: dict) -> "AvatarPreset":
+        params = [AvatarParameter.from_dict(p) for p in d.get("parameters", [])]
+        return AvatarPreset(
+            name=d["name"],
+            avatarId=d["avatarId"],
+            parameters=params,
+        )
         
 
 # we could save shit like. avatar: object, then key: paramname, then
 class AvatarManager():
-    def __init__(self):
+    def __init__(self, client: VRCClient):
         config = self.read_config()
         self.blacklistIndividual: list[str] = config['blacklist']['individual']
         self.blacklistPartial: list[str] = config['blacklist']['partial']
-        self.presets = list[AvatarPreset]
+        self.presets: list[AvatarPreset] = [] 
+        self.vrcclient = client
         pass
     def read_config(self):
         file = open("config.json", "r")
         config = json.load(file)
-        print(config)
         file.close()
         return config
     def save_avatar_state(self, preset: AvatarPreset):
         with open(preset.avatarId + ".json", 'w') as file:
             json.dump(preset.to_dict(), file, indent=2)
-        
-    def apply_avatar_state(self, preset):
+        pass
+    def is_in_partial_blacklist(self, paramName: str):
+        for fix in self.blacklistPartial:
+            if paramName.find(fix) != -1:
+                return True
+        return False
+    def apply_avatar_state(self, avId: str):
+        #Ideally here we NEVER read the file, we fetch from self.prests. Will be done eventually,this is just for testing
+        with open(avId + ".json", "r") as file:
+            data = json.load(file)
+            loaded_preset: AvatarPreset = AvatarPreset.from_dict(data)
+            for param in loaded_preset.parameters:
+                if param.name not in self.blacklistIndividual:
+                    self.vrcclient.send_param_change(param.path, param.value)
         pass
 
 def main():
     oscqService = OscQueryDiscovery()
-    avatarManager = AvatarManager()
     try:
         if not oscqService.wait(10):
             print("bruh")
@@ -130,10 +155,11 @@ def main():
         print(oscqService.ip)
         print(oscqService.port)
         client = VRCClient(oscqPort=oscqService.port)
+        avatarManager = AvatarManager(client=client)
         avId = client.get_avatar_id()
-        print(client.get_avatar_params())
         preset = AvatarPreset("testPreset1", client.get_avatar_id(), client.get_avatar_params())
         #avatarManager.save_avatar_state(preset)
+        avatarManager.apply_avatar_state(avId)
 
         pass
     finally:
