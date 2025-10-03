@@ -8,6 +8,14 @@ from AvatarPresetManager.avatarManager import AvatarManager
 
 # we could save shit like. avatar: object, then key: paramname, then
 
+def askUserForPresetName() -> str:
+    presetName = input("Input the name of the preset\n")
+    while presetName == "":
+        print("Preset name cannot be empty !\n")
+        os.system('cls' if os.name == 'nt' else 'clear')
+        presetName = input("Input the name of the preset\n")
+    return presetName
+
 def main():
     os.system('cls' if os.name == 'nt' else 'clear')
     oscqService = OscQueryDiscovery()
@@ -22,12 +30,11 @@ def main():
             userInput = input("[1]: Save avatar state\n[2]: Load preset\n")
             os.system('cls' if os.name == 'nt' else 'clear')
             if int(userInput) == 1:
-                presetName = input("What is the name of the preset ?\n")
-                if presetName == "":
-                    presetName = "default"
-                pass
+                print("Function selected: Save preset\n")
+                presetName = askUserForPresetName()
             elif int(userInput) == 2:
-                pass
+                print("Function selected: Apply preset")
+                presetName = askUserForPresetName()
             else:
                 os.system('cls' if os.name == 'nt' else 'clear')
         

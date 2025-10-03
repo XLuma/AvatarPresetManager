@@ -19,11 +19,21 @@ class AvatarManager():
         with open(preset.avatarId + ".json", 'w') as file:
             json.dump(preset.to_dict(), file, indent=2)
         pass
-    def is_in_partial_blacklist(self, paramName: str):
+    def is_in_partial_blacklist(self, paramName: str) -> bool:
         for fix in self.blacklistPartial:
             if paramName.find(fix) != -1:
                 return True
         return False
+    def check_if_preset_exists(self, presetName: str) -> bool:
+        for preset in self.presets:
+            if preset.name == presetName:
+                return True
+        return False
+    def find_avatar_preset(self, presetName: str, avatarId: str) -> AvatarPreset | object: #Ideally here, we throw an error if not found and we handle that properly.
+        for preset in self.presets:
+            if preset.name == presetName and preset.avatarId == avatarId:
+                return preset
+        return {}
     def apply_avatar_state(self, avId: str):
         #Ideally here we NEVER read the file, we fetch from self.prests. Will be done eventually,this is just for testing
         with open(avId + ".json", "r") as file:
