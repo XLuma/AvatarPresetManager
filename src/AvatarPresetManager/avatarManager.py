@@ -1,14 +1,17 @@
 import json
+import os
 from AvatarPresetManager.avatarPreset import AvatarPreset
 from AvatarPresetManager.vrcClient import VRCClient
 
 class AvatarManager():
     def __init__(self, client: VRCClient):
-        config = self.read_config()
         self.blacklistIndividual: list[str] = config['blacklist']['individual']
         self.blacklistPartial: list[str] = config['blacklist']['partial']
         self.presets: list[AvatarPreset] = [] 
         self.vrcclient = client
+        if os.path.isdir(os.getcwd() + "/presets"):
+            os.mkdir(os.getcwd() + "/presets")
+        # todo: finish code to load presets from disk
         pass
     def read_config(self):
         file = open("config.json", "r")
