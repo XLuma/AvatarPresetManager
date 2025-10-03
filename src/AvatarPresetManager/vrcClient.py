@@ -15,6 +15,8 @@ class VRCClient():
         Will send a message to VRChat with OSC. Returns nothing.
         """
         self.client.send_message(path, param) #should work for any type of parameter
+    def change_avatar(self, avatarId: str):
+        self.send_param_change("/avatar/change", avatarId)
     def get_root_node(self):
         """
         Gets the current avatar state, and returns it. Can be retrieved with the currentAvatarRaw attribute

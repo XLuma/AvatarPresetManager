@@ -3,3 +3,4 @@ requests
 schedule
 pytimedinput
 zeroconf
+pathlib
