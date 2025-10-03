@@ -13,7 +13,6 @@ class AvatarManager():
         self.presets: Dict[str, Dict[str, AvatarPreset]] = {}
         self.vrcclient = client
         self.preset_nums = 0
-        # todo: finish code to load presets from disk
         pass
     def parse_existing_presets(self) -> int:
         """
