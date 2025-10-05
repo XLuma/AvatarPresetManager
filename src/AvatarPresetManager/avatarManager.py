@@ -57,16 +57,20 @@ class AvatarManager():
             if paramName.find(fix) != -1:
                 return True
         return False
-    def check_if_preset_exists(self, presetName: str) -> bool:
-        for preset in self.presets:
-            if preset.name == presetName:
-                return True
-        return False
     def find_avatar_preset(self, presetName: str, avatarId: str) -> AvatarPreset | object: #Ideally here, we throw an error if not found and we handle that properly.
-        for preset in self.presets:
-            if preset.name == presetName and preset.avatarId == avatarId:
-                return preset
+        ##figure out overloads for avId or whatever
+        for avatarId, presets in self.presets.items():
+            for savedPresetName, preset in presets.items():
+                if presetName == savedPresetName:
+                    return preset
         return {}
+    def delete_preset(self, presetName: str) -> bool:
+        preset = self.find_avatar_preset(presetName=presetName, avatarId="")
+        if not preset.name: 
+            return False
+        del self.presets[preset.avatarId][presetName]
+        # todo code that removes the file path. maybe I store it in the preset object as well..
+        return True
     def apply_avatar_state(self, presetName: str):
         currentAvatarId = self.vrcclient.get_avatar_id()
         for avatarId, presets in self.presets.items():
