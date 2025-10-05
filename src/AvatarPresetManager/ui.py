@@ -107,7 +107,6 @@ class PresetManagerUI:
 
         idx = selection[0]
         avatar_id, preset_name = self._preset_items[idx]
-
         try:
             self.manager.apply_avatar_state(preset_name)
         except Exception as exc:  # pragma: no cover - UI level feedback

@@ -6,6 +6,7 @@ import sys
 from AvatarPresetManager.oscq_discovery import OscQueryDiscovery
 from AvatarPresetManager.avatarManager import AvatarManager
 from AvatarPresetManager.vrcClient import VRCClient
+from AvatarPresetManager.ui import PresetManagerUI
 
 # we could save shit like. avatar: object, then key: paramname, then
 
@@ -28,7 +29,9 @@ def main():
         print(oscqService.port)
         client = VRCClient(oscqService.port)
         avatarManager = AvatarManager(client=client)
-        avatarManager.parse_existing_presets()
+        ui = PresetManagerUI(avatarManager)
+        ui.run()
+        """
         while(True):
             print("What to do ?\n")
             userInput = input("[1]: Save avatar state\n[2]: Load preset\n[3]: Inspect loaded presets\n")
@@ -54,6 +57,7 @@ def main():
         avatarManager.apply_avatar_state(avId)
 
         pass
+    """
     finally:
         oscqService.stop()
 

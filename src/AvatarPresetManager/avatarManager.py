@@ -1,5 +1,6 @@
 import json
 import os
+import time
 from typing import Dict
 from pathlib import Path
 from AvatarPresetManager.avatarPreset import AvatarPreset
@@ -73,12 +74,12 @@ class AvatarManager():
         return True
     def apply_avatar_state(self, presetName: str):
         currentAvatarId = self.vrcclient.get_avatar_id()
-        for avatarId, presets in self.presets.items():
-            for savedPresetName, preset in presets.items():
-                if presetName == savedPresetName:
-                    if currentAvatarId != preset.avatarId:
-                        self.vrcclient.change_avatar(preset.avatarId)
-                    for param in preset.parameters:
-                        if param.name not in self.blacklistIndividual:
-                            self.vrcclient.send_param_change(param.path, param.value)
+        preset = self.find_avatar_preset(presetName=presetName, avatarId="")
+        if currentAvatarId != preset.avatarId:
+            self.vrcclient.change_avatar(preset.avatarId)
+            self.vrcclient.wait_for_avatar_ready(min_params=1) #this is absolutely necessary because the game often sends back avatar id very early
+        self.vrcclient.get_root_node() # refresh avi data
+        for param in preset.parameters:
+            if param.name not in self.blacklistIndividual:
+                self.vrcclient.send_param_change(param.path, param.value)
         pass
