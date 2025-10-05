@@ -1,0 +1,1 @@
+# todo Implement a UI using tk that allows to save presets and apply presets
