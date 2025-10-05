@@ -55,7 +55,7 @@ class AvatarManager():
         pass
     def is_in_partial_blacklist(self, paramName: str) -> bool:
         for fix in self.blacklistPartial:
-            if paramName.find(fix) != -1:
+            if paramName.startswith(fix) == True:
                 return True
         return False
     def find_avatar_preset(self, presetName: str, avatarId: str) -> AvatarPreset | object: #Ideally here, we throw an error if not found and we handle that properly.
@@ -70,7 +70,7 @@ class AvatarManager():
         if not preset.name: 
             return False
         del self.presets[preset.avatarId][presetName]
-        # todo code that removes the file path. maybe I store it in the preset object as well..
+        # todo code that removes the file. maybe I store it in the preset object as well..
         return True
     def apply_avatar_state(self, presetName: str):
         currentAvatarId = self.vrcclient.get_avatar_id()
@@ -80,6 +80,6 @@ class AvatarManager():
             self.vrcclient.wait_for_avatar_ready(min_params=1) #this is absolutely necessary because the game often sends back avatar id very early
         self.vrcclient.get_root_node() # refresh avi data
         for param in preset.parameters:
-            if param.name not in self.blacklistIndividual:
+            if param.name not in self.blacklistIndividual and not self.is_in_partial_blacklist(param.rawName):
                 self.vrcclient.send_param_change(param.path, param.value)
         pass
