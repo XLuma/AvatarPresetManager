@@ -54,6 +54,9 @@ class PresetManagerUI:
         self.create_button = tk.Button(button_frame, text="Create Preset", command=self._create_preset)
         self.create_button.grid(row=0, column=1, padx=(6, 0), sticky="ew")
 
+        self.delete_button = tk.Button(button_frame, text="Delete preset", command=self._delete_preset)
+        self.delete_button.grid(row=0, column=2, padx=(6, 0), sticky="ew")
+
     # ------------------------------------------------------------------
     def _load_presets(self) -> None:
         """Populate the preset list from the avatar manager."""
@@ -137,6 +140,24 @@ class PresetManagerUI:
         messagebox.showinfo("Create Preset", f"Preset '{preset_name}' has been created.")
 
     # ------------------------------------------------------------------
+    def _delete_preset(self) -> None:
+        if not self._preset_items:
+            return
+        selection = self.preset_list.curselection()
+        if not selection:
+            messagebox.showinfo("Delete Preset", "Please select a preset to delete.")
+            return
+
+        idx = selection[0]
+        avatar_id, preset_name = self._preset_items[idx]
+        try:
+            self.manager.delete_preset(preset_name)
+        except Exception as exc:
+            messagebox.showerror("Delete Preset", f"Failed to delete preset:\n{exc}")
+        self._preset_items = self._extract_presets()
+        self._refresh_listbox()
+        messagebox.showinfo("Delete preset", f"Preset '{preset_name}' has been deleted.")
+
     def run(self) -> None:
         """Start the Tkinter main loop."""
 
