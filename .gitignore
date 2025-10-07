@@ -1,3 +1,8 @@
 __pycache__
 avtr_*.json
 presets/
+*.build/
+*.dist/
+*.onefile-build/
+*.exe
+*.xml

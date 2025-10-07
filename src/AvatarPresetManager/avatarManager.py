@@ -39,7 +39,7 @@ class AvatarManager():
         return self.preset_nums
     def read_config(self):
         print(os.getcwd())
-        file = open("src/config.json", "r")
+        file = open(os.getcwd() + "/src/config.json", "r")
         config = json.load(file)
         file.close()
         return config

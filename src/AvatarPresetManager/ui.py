@@ -85,16 +85,25 @@ class PresetManagerUI:
     def _refresh_listbox(self) -> None:
         """Refresh listbox contents to match the cached preset items."""
 
+        # Always enable first so delete/insert actually work
+        self.preset_list.configure(state=tk.NORMAL)
         self.preset_list.delete(0, tk.END)
+
         if not self._preset_items:
             self.preset_list.insert(tk.END, "No presets available")
+            # Optional: gray it out so it looks like a placeholder
+            try:
+                self.preset_list.itemconfig(0, foreground="gray")
+            except Exception:
+                pass
             self.preset_list.configure(state=tk.DISABLED)
             self.apply_button.configure(state=tk.DISABLED)
-        else:
-            self.preset_list.configure(state=tk.NORMAL)
-            for avatar_id, preset_name in self._preset_items:
-                self.preset_list.insert(tk.END, f"{preset_name} ({avatar_id})")
-            self.apply_button.configure(state=tk.NORMAL)
+            return
+
+        # We have real items
+        for avatar_id, preset_name in self._preset_items:
+            self.preset_list.insert(tk.END, f"{preset_name} ({avatar_id})")
+        self.apply_button.configure(state=tk.NORMAL)
 
     # ------------------------------------------------------------------
     def _apply_selected(self) -> None:
@@ -141,6 +150,7 @@ class PresetManagerUI:
 
     # ------------------------------------------------------------------
     def _delete_preset(self) -> None:
+        # todo add prompt for yes/no for delete
         if not self._preset_items:
             return
         selection = self.preset_list.curselection()

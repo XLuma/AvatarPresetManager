@@ -4,3 +4,4 @@ schedule
 pytimedinput
 zeroconf
 pathlib
+nuitka
