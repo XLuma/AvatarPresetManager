@@ -8,8 +8,6 @@ from AvatarPresetManager.avatarManager import AvatarManager
 from AvatarPresetManager.vrcClient import VRCClient
 from AvatarPresetManager.ui import PresetManagerUI
 
-# we could save shit like. avatar: object, then key: paramname, then
-
 def askUserForPresetName() -> str:
     presetName = input("Input the name of the preset\n")
     while presetName == "":
@@ -31,33 +29,6 @@ def main():
         avatarManager = AvatarManager(client=client)
         ui = PresetManagerUI(avatarManager)
         ui.run()
-        """
-        while(True):
-            print("What to do ?\n")
-            userInput = input("[1]: Save avatar state\n[2]: Load preset\n[3]: Inspect loaded presets\n")
-            os.system('cls' if os.name == 'nt' else 'clear')
-            if int(userInput) == 1:
-                print("Function selected: Save preset\n")
-                presetName = askUserForPresetName()
-                avatarManager.save_avatar_state(presetName)
-            elif int(userInput) == 2:
-                print("Function selected: Apply preset")
-                presetName = askUserForPresetName()
-                avatarManager.apply_avatar_state(presetName)
-            elif int(userInput) == 3:
-                pass
-            else:
-                os.system('cls' if os.name == 'nt' else 'clear')
-        
-        client = VRCClient(oscqPort=oscqService.port)
-        avatarManager = AvatarManager(client=client)
-        avId = client.get_avatar_id()
-        preset = AvatarPreset("testPreset1", client.get_avatar_id(), client.get_avatar_params())
-        #avatarManager.save_avatar_state(preset)
-        avatarManager.apply_avatar_state(avId)
-
-        pass
-    """
     finally:
         oscqService.stop()
 
