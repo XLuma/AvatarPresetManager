@@ -26,6 +26,3 @@ copyright = "Copyright (C) 2025 by XLuma"
 [tool.flet.app]
 path = "src"
 module= "AvatarPresetManager"
-
-[tool.flet.flutter.pubspec.dependency_overrides]
-webview_flutter_android = "3.7.1"
