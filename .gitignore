@@ -6,3 +6,5 @@ presets/
 *.onefile-build/
 *.exe
 *.xml
+build/
+dist/

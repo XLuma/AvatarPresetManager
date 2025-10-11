@@ -6,18 +6,11 @@ import sys
 from AvatarPresetManager.oscq_discovery import OscQueryDiscovery
 from AvatarPresetManager.avatarManager import AvatarManager
 from AvatarPresetManager.vrcClient import VRCClient
-from AvatarPresetManager.ui import PresetManagerUI
-
-def askUserForPresetName() -> str:
-    presetName = input("Input the name of the preset\n")
-    while presetName == "":
-        print("Preset name cannot be empty !\n")
-        os.system('cls' if os.name == 'nt' else 'clear')
-        presetName = input("Input the name of the preset\n")
-    return presetName
+#from AvatarPresetManager.boostrapui import PresetManagerUI
+from AvatarPresetManager.fletui import FletPresetManagerUI
 
 def main():
-    os.system('cls' if os.name == 'nt' else 'clear')
+    #os.system('cls' if os.name == 'nt' else 'clear')
     oscqService = OscQueryDiscovery()
     try:
         if not oscqService.wait(10):
@@ -27,8 +20,10 @@ def main():
         print(oscqService.port)
         client = VRCClient(oscqService.port)
         avatarManager = AvatarManager(client=client)
-        ui = PresetManagerUI(avatarManager)
+        ui = FletPresetManagerUI(avatarManager)
         ui.run()
+    except Exception as e:
+        os._exit(1)
     finally:
         oscqService.stop()
 

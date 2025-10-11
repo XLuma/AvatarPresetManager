@@ -1,0 +1,31 @@
+[project]
+name = "AvatarPresetManager"
+version = "0.1.0"
+description = ""
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "XLuma", email = "you@example.com" }
+]
+dependencies = [
+    "python-osc",
+    "requests",
+    "schedule",
+    "pytimedinput",
+    "zeroconf",
+    "pathlib",
+    "flet==0.28.3",
+]
+
+[tool.flet]
+org = "com.xluma"
+product = "AvatarPresetManager"
+company = "XLuma"
+copyright = "Copyright (C) 2025 by XLuma"
+
+[tool.flet.app]
+path = "src"
+module= "AvatarPresetManager"
+
+[tool.flet.flutter.pubspec.dependency_overrides]
+webview_flutter_android = "3.7.1"

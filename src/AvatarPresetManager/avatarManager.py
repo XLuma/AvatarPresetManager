@@ -5,12 +5,13 @@ from typing import Dict
 from pathlib import Path
 from AvatarPresetManager.avatarPreset import AvatarPreset
 from AvatarPresetManager.vrcClient import VRCClient
+from AvatarPresetManager.settings import Settings
 
 class AvatarManager():
     def __init__(self, client: VRCClient):
-        config = self.read_config()
-        self.blacklistIndividual: list[str] = config['blacklist']['individual']
-        self.blacklistPartial: list[str] = config['blacklist']['partial']
+        config = Settings()
+        self.blacklistIndividual: list[str] = config.blacklistIndividual
+        self.blacklistPartial: list[str] = config.blacklistPartial
         self.presets: Dict[str, Dict[str, AvatarPreset]] = {}
         self.vrcclient = client
         self.preset_nums = 0
@@ -38,8 +39,9 @@ class AvatarManager():
         print(self.presets)
         return self.preset_nums
     def read_config(self):
-        print(os.getcwd())
-        file = open(os.getcwd() + "/config.json", "r")
+        #app_data_path = os.getenv("FLET_APP_STORAGE_DATA")
+        #config_path = os.path.join(app_data_path, "config.json")
+        file = open(os.getcwd() + "/src/config.json", "r")
         config = json.load(file)
         file.close()
         return config

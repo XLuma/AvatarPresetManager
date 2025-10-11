@@ -3,5 +3,5 @@ requests
 schedule
 pytimedinput
 zeroconf
-pathlib
-nuitka
+flet
+ttkbootstrap
