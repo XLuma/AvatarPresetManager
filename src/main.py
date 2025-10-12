@@ -34,6 +34,7 @@ def main(page: ft.Page):
                 ui._notify("VRChat is offline !", 2000, "error")
             time.sleep(0.5)
             oscq.stop()
+            oscq = OscQueryDiscovery()
   
     page.add(ft.Text("somehow we here"))
     ui.run(page)
