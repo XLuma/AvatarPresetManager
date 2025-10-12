@@ -7,11 +7,11 @@ import threading
 import time
 
 class VRCClient():
-    def __init__(self, oscqPort):
+    def __init__(self, oscqPort: int):
         self.ip = "127.0.0.1"
         self.port = 9000 #vrchat expects messages over there
         self.client = SimpleUDPClient(self.ip, self.port)
-        self.oscqport = oscqPort
+        self.oscqport: int = oscqPort
         self.currentAvatarRaw = {}
         #some code to get the config ? maybe ?
     def send_param_change(self, path, param):

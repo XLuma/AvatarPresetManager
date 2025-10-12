@@ -9,7 +9,7 @@ class OscQueryDiscovery():
         """
         self.__zeroconf = Zeroconf()
         self.ip = ""
-        self.port = ""
+        self.port: int = 0
         self.name = ""
         self.host = ""
         self.__found = threading.Event()

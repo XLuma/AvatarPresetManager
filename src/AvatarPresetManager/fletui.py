@@ -14,6 +14,10 @@ class FletPresetManagerUI:
 
         self._preset_items: List[Tuple[str, List[str]]] = []  # list of (avatar_id, [presets])
         self.page: ft.Page | None = None
+        self.vrchat_online: bool = False
+        self.status_chip: ft.Container | None = None  # visual indicator
+        self.drawer: ft.Control | None = None
+        self.vrchat_online: bool = False
 
     def _load_presets(self):
         try:
@@ -40,10 +44,33 @@ class FletPresetManagerUI:
             ]
         )
 
+        self.status_chip = ft.Container(
+            padding=ft.padding.symmetric(6, 8),
+            border_radius=16,
+            bgcolor=ft.Colors.with_opacity(0.15, ft.Colors.RED_400),
+            content=ft.Row(
+                [
+                    ft.Icon(ft.Icons.CIRCLE, size=10, color=ft.Colors.RED_400),
+                    ft.Text("VRChat: Offline", size=12),
+                ],
+                spacing=6,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            ),
+        )
+
+
         # App bar
         page.appbar = ft.AppBar(
             leading=ft.IconButton(ft.Icons.MENU, on_click=lambda e: page.open(drawer)),
-            title=ft.Text("Avatar Preset Manager"),
+            title=ft.Container(
+                content=ft.Row(
+                    [
+                        ft.Text("Avatar Preset Manager"), 
+                        self.status_chip,
+                    ], 
+                    spacing=16
+                )
+            ),
             actions=[
                 ft.TextButton("Create Preset", on_click=self._on_create),
                 ft.TextButton("Refresh", on_click=lambda e: self._refresh(page)),
@@ -60,6 +87,20 @@ class FletPresetManagerUI:
     def _force_quit(self):
         self.page.window.destroy()
         sys.exit(100)
+    def set_vrchat_online(self, is_online: bool, ip: str | None = None, port: int | None = None):
+        self.vrchat_online = is_online
+        if not self.page or not self.status_chip:
+            return
+        if is_online:
+            label = f"VRChat: Online{f' ({ip}:{port})' if ip and port else ''}"
+            self.status_chip.bgcolor = ft.Colors.with_opacity(0.15, ft.Colors.GREEN_400)
+            self.status_chip.content. controls[0].color = ft.Colors.GREEN_400
+            self.status_chip.content.controls[1].value = label
+        else:
+            self.status_chip.bgcolor = ft.Colors.with_opacity(0.15, ft.Colors.RED_400)
+            self.status_chip.content.controls[0].color = ft.Colors.RED_400
+            self.status_chip.content.controls[1].value = "VRChat: Offline"
+        self.page.update()
     def _avatar_tile(self, avatar_id: str, presets: list[str]) -> ft.ExpansionTile:
         return ft.Container(
             border=ft.border.all(1.5, ft.Colors.with_opacity(0.08, ft.Colors.ON_SURFACE)),
@@ -177,9 +218,7 @@ class FletPresetManagerUI:
             ],
             actions_alignment=ft.MainAxisAlignment.END,
         )
-        e.page.dialog = dlg
-        dlg.open = True
-        e.page.update()
+        self.page.open(dlg)
 
 
 # -------- entrypoint --------
