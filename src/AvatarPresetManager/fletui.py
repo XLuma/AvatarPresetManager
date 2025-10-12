@@ -31,7 +31,11 @@ class FletPresetManagerUI:
             print("Error loading presets:", exc)
             self._preset_items = []
 
-
+    def _dismiss_sidebar(self, e):
+        self.drawer.selected_index =-1
+        self.page.close(self.drawer)
+        pass
+    
     def mount(self, page: ft.Page):
         self.page = page
         page.title = "Avatar Preset Manager"
@@ -40,9 +44,13 @@ class FletPresetManagerUI:
         # Sidebar
         drawer = ft.NavigationDrawer(
             controls=[
+                ft.Container(height=550),
                 ft.NavigationDrawerDestination(icon=ft.Icons.SETTINGS, label="Settings"),
+                ft.Container(height=6),
                 ft.NavigationDrawerDestination(icon=ft.Icons.INFO, label="About"),
-            ]
+            ],
+            selected_index=-1,
+            on_dismiss=self._dismiss_sidebar
         )
 
         self.status_chip = ft.Container(

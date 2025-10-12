@@ -1,3 +1,6 @@
+from typing import Dict
+from pathlib import Path
+
 class Settings():
     def __init__(self):
         self.blacklistIndividual = [
@@ -43,5 +46,11 @@ class Settings():
             "VFH",
             "VF_"
         ]
+        self.avatarIdAssociations = {} #"avId": userProvidedName
+        self.isLightMode: bool = False
+        pass
+    def from_dict():
+        pass
+    def to_dict():
         pass
     
