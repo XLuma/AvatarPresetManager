@@ -2,14 +2,12 @@
 This piece of software allows you to create snapshots of your avatar state, and restore it at any moment. It uses VRChat OSC to function.
 
 ## TODO
-- Add rename feature
-
-- Make it so port scanning happens at all time, not just program startup (make it so ui loads even without it)
-- Start vrchat button (could load preset once the game loads ??)
-- config generator ?
+- Figure out a proper way to prevent the data folder from resetting itself when a new executable is generated
+- Add rename feature (preset names, avatar id association)
+- config generator
 - Updater program
 - Python code cleanup
-- Once cleanup is done, rewrite in nodejs + electron
 
 ## Known issues
 - Switching into an avatar only works if that avatar is favorited. [This is due to a VRChat bug](`https://feedback.vrchat.com/avatar-30/p/1626-osc-avatar-change-is-not-working`)
+- VRChat discovery, once online, seems to not detect properly if the game is offline

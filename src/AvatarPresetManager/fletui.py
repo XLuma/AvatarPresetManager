@@ -94,7 +94,7 @@ class FletPresetManagerUI:
         if is_online:
             label = f"VRChat: Online{f' ({ip}:{port})' if ip and port else ''}"
             self.status_chip.bgcolor = ft.Colors.with_opacity(0.15, ft.Colors.GREEN_400)
-            self.status_chip.content. controls[0].color = ft.Colors.GREEN_400
+            self.status_chip.content.controls[0].color = ft.Colors.GREEN_400
             self.status_chip.content.controls[1].value = label
         else:
             self.status_chip.bgcolor = ft.Colors.with_opacity(0.15, ft.Colors.RED_400)
