@@ -10,4 +10,3 @@ This piece of software allows you to create snapshots of your avatar state, and 
 
 ## Known issues
 - Switching into an avatar only works if that avatar is favorited. [This is due to a VRChat bug](`https://feedback.vrchat.com/avatar-30/p/1626-osc-avatar-change-is-not-working`)
-- VRChat discovery, once online, seems to not detect properly if the game is offline
