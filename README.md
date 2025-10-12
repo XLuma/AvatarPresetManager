@@ -2,7 +2,7 @@
 This piece of software allows you to create snapshots of your avatar state, and restore it at any moment. It uses VRChat OSC to function.
 
 ## TODO
-- Figure out a proper way to prevent the data folder from resetting itself when a new executable is generated
+- Figure out a proper way to prevent the data folder from resetting itself when a new executable is generated (use that env variable they talkin about ?? https://flet.dev/docs/cookbook/read-and-write-files)
 - Add rename feature (preset names, avatar id association)
 - config generator
 - Updater program
