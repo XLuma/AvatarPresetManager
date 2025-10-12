@@ -15,12 +15,15 @@ class AvatarManager():
         self.presets: Dict[str, Dict[str, AvatarPreset]] = {}
         self.vrcclient = client
         self.preset_nums = 0
+        self.dataPath = Path(os.getenv("FLET_APP_STORAGE_DATA"))
         pass
+
     def parse_existing_presets(self) -> int:
         """
         Returns the number of parsed presets
         """
-        path = Path.cwd() / "presets"
+        path = self.dataPath / "presets"
+        
         self.presets.clear()
         if not path.exists():
             path.mkdir()
@@ -38,13 +41,12 @@ class AvatarManager():
                 self.presets[avatar_id] = presets
         print(self.presets)
         return self.preset_nums
+    
     def read_config(self):
-        #app_data_path = os.getenv("FLET_APP_STORAGE_DATA")
-        #config_path = os.path.join(app_data_path, "config.json")
-        file = open(os.getcwd() + "/src/config.json", "r")
-        config = json.load(file)
-        file.close()
-        return config
+        config_path = self.dataPath / "config.json"
+        with config_path.open("r", encoding="utf-8") as file:
+            return json.load(file)
+        
     def save_avatar_state(self, presetName: str):
         avatarId = self.vrcclient.get_avatar_id()
         avatarState = self.vrcclient.get_avatar_params()
@@ -55,11 +57,13 @@ class AvatarManager():
         presetPath = path / f"{presetName}.json"
         presetPath.write_text(json.dumps(preset.to_dict(), indent=2))
         pass
+
     def is_in_partial_blacklist(self, paramName: str) -> bool:
         for fix in self.blacklistPartial:
             if paramName.startswith(fix) == True:
                 return True
         return False
+    
     def find_avatar_preset(self, presetName: str, avatarId: str) -> AvatarPreset: #Ideally here, we throw an error if not found and we handle that properly.
         ##figure out overloads for avId or whatever
         for avatarId, presets in self.presets.items():
@@ -67,16 +71,18 @@ class AvatarManager():
                 if presetName == savedPresetName:
                     return preset
         raise Exception()
+    
     def delete_preset(self, presetName: str) -> bool:
         preset = self.find_avatar_preset(presetName=presetName, avatarId="")
         if not preset.name: 
             raise Exception()
-        path = Path.cwd() / "presets" / preset.avatarId / f"{preset.name}.json"
+        path = self.dataPath / "presets" / preset.avatarId / f"{preset.name}.json"
         if not path.is_file():
             raise Exception()
         path.unlink()
         del self.presets[preset.avatarId][presetName]
         return True
+    
     def apply_avatar_state(self, presetName: str):
         currentAvatarId = self.vrcclient.get_avatar_id()
         preset = self.find_avatar_preset(presetName=presetName, avatarId="")

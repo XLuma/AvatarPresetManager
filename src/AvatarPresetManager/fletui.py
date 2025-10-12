@@ -4,7 +4,8 @@ import sys
 from typing import List, Tuple
 import flet as ft
 from AvatarPresetManager.avatarManager import AvatarManager
-
+from pathlib import Path
+import os
 
 class FletPresetManagerUI:
     """Flet-based UI for managing avatar presets."""
@@ -77,7 +78,6 @@ class FletPresetManagerUI:
         )
 
         self.drawer = drawer
-        page.add(drawer)
 
         self._load_presets()
         self._render_main(page)
@@ -149,7 +149,7 @@ class FletPresetManagerUI:
         tiles = [self._avatar_tile(aid, presets) for aid, presets in self._preset_items]
         list_view = ft.ListView(controls=tiles, spacing=6, padding=10, auto_scroll=False)
         page.controls.clear()
-        page.add(self.drawer, list_view)
+        page.add(list_view)
         page.update()
 
     def _refresh(self, page: ft.Page):
@@ -187,6 +187,7 @@ class FletPresetManagerUI:
     def _delete_preset(self, name: str):
         try:
             self.manager.delete_preset(name)
+            self._refresh(self.page)
         except Exception as exc:
             print("Error deleting preset:", exc)
 
