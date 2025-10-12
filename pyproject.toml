@@ -9,11 +9,8 @@ authors = [
 ]
 dependencies = [
     "python-osc",
-    "requests",
-    "schedule",
-    "pytimedinput",
     "zeroconf",
-    "pathlib",
+    "requests",
     "flet==0.28.3",
 ]
 
@@ -25,4 +22,14 @@ copyright = "Copyright (C) 2025 by XLuma"
 
 [tool.flet.app]
 path = "src"
-module= "AvatarPresetManager"
+
+[tool.uv]
+dev-dependencies = [
+    "flet[all]==0.28.3",
+]
+
+[tool.poetry]
+package-mode = false
+
+[tool.poetry.group.dev.dependencies]
+flet = {extras = ["all"], version = "0.28.3"}

@@ -26,12 +26,11 @@ class FletPresetManagerUI:
             print("Error loading presets:", exc)
             self._preset_items = []
 
+
     def mount(self, page: ft.Page):
         self.page = page
         page.title = "Avatar Preset Manager"
         page.theme_mode = ft.ThemeMode.DARK
-        page.window_width = 900
-        page.window_height = 600
 
         # Sidebar (hamburger drawer)
         drawer = ft.NavigationDrawer(
@@ -184,9 +183,6 @@ class FletPresetManagerUI:
 
 
 # -------- entrypoint --------
-    def run(self):
-        def main(page: ft.Page):
-            self.mount(page)
-
-        ft.app(target=main, view=ft.AppView.FLET_APP)
+    def run(self, page):
+        self.mount(page)
 
