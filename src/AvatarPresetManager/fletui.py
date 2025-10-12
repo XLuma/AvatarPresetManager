@@ -3,7 +3,7 @@ from __future__ import annotations
 import sys
 from typing import List, Tuple
 import flet as ft
-from AvatarPresetManager.avatarManager import AvatarManager  # your import
+from AvatarPresetManager.avatarManager import AvatarManager
 
 
 class FletPresetManagerUI:
@@ -15,7 +15,7 @@ class FletPresetManagerUI:
         self._preset_items: List[Tuple[str, List[str]]] = []  # list of (avatar_id, [presets])
         self.page: ft.Page | None = None
         self.vrchat_online: bool = False
-        self.status_chip: ft.Container | None = None  # visual indicator
+        self.status_chip: ft.Container | None = None
         self.drawer: ft.Control | None = None
         self.vrchat_online: bool = False
 
@@ -36,7 +36,7 @@ class FletPresetManagerUI:
         page.title = "Avatar Preset Manager"
         page.theme_mode = ft.ThemeMode.DARK
 
-        # Sidebar (hamburger drawer)
+        # Sidebar
         drawer = ft.NavigationDrawer(
             controls=[
                 ft.NavigationDrawerDestination(icon=ft.Icons.SETTINGS, label="Settings"),
@@ -58,8 +58,6 @@ class FletPresetManagerUI:
             ),
         )
 
-
-        # App bar
         page.appbar = ft.AppBar(
             leading=ft.IconButton(ft.Icons.MENU, on_click=lambda e: page.open(drawer)),
             title=ft.Container(
@@ -81,12 +79,13 @@ class FletPresetManagerUI:
         self.drawer = drawer
         page.add(drawer)
 
-        # Load data and render
         self._load_presets()
         self._render_main(page)
+
     def _force_quit(self):
         self.page.window.destroy()
         sys.exit(100)
+
     def set_vrchat_online(self, is_online: bool, ip: str | None = None, port: int | None = None):
         self.vrchat_online = is_online
         if not self.page or not self.status_chip:
@@ -101,6 +100,7 @@ class FletPresetManagerUI:
             self.status_chip.content.controls[0].color = ft.Colors.RED_400
             self.status_chip.content.controls[1].value = "VRChat: Offline"
         self.page.update()
+
     def _avatar_tile(self, avatar_id: str, presets: list[str]) -> ft.ExpansionTile:
         return ft.Container(
             border=ft.border.all(1.5, ft.Colors.with_opacity(0.08, ft.Colors.ON_SURFACE)),
@@ -144,6 +144,7 @@ class FletPresetManagerUI:
                 ],
             )
         )
+    
     def _render_main(self, page: ft.Page):
         tiles = [self._avatar_tile(aid, presets) for aid, presets in self._preset_items]
         list_view = ft.ListView(controls=tiles, spacing=6, padding=10, auto_scroll=False)
@@ -166,13 +167,6 @@ class FletPresetManagerUI:
             "error": ft.Colors.RED_300,
         }.get(level, ft.Colors.BLUE_300)
         self.page.open(ft.SnackBar(ft.Text(msg), bgcolor=color, duration=duration))
-
-    def _apply_avatar(self, avatar_id: str):
-        # convention: apply "Default" if present
-        presets = self.manager.presets.get(avatar_id, {})
-        name = "Default" if "Default" in presets else next(iter(presets), None)
-        if name:
-            self._apply_preset(name)
 
     def _apply_preset(self, name: str):
         try:
