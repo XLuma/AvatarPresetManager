@@ -35,16 +35,19 @@ class FletPresetManagerUI:
         self.drawer.selected_index =-1
         self.page.close(self.drawer)
         pass
-    
+
+    def _handle_sidebar(self, e):
+        pass
+
     def mount(self, page: ft.Page):
         self.page = page
         page.title = "Avatar Preset Manager"
         page.theme_mode = ft.ThemeMode.DARK
 
-        # Sidebar
+        # Sidebar, unused but we keep it for now
         drawer = ft.NavigationDrawer(
             controls=[
-                ft.Container(height=550),
+                ft.Container(height=16),
                 ft.NavigationDrawerDestination(icon=ft.Icons.SETTINGS, label="Settings"),
                 ft.Container(height=6),
                 ft.NavigationDrawerDestination(icon=ft.Icons.INFO, label="About"),
@@ -68,7 +71,7 @@ class FletPresetManagerUI:
         )
 
         page.appbar = ft.AppBar(
-            leading=ft.IconButton(ft.Icons.MENU, on_click=lambda e: page.open(drawer)),
+            #leading=ft.IconButton(ft.Icons.MENU, on_click=lambda e: page.open(drawer)),
             title=ft.Container(
                 content=ft.Row(
                     [
@@ -84,7 +87,21 @@ class FletPresetManagerUI:
                 ft.TextButton("Close with logs", on_click=lambda e: self._force_quit())
             ],
         )
-
+        self.sidebar =ft.Container(
+            content=ft.Container(
+                content=ft.Column(
+                            controls=[
+                                ft.IconButton(ft.Icons.INFO, on_click=lambda e: print("about")),
+                                ft.IconButton(ft.Icons.SETTINGS, on_click=lambda e: print("settings")),
+                            ],
+                            spacing=0,
+                            alignment=ft.MainAxisAlignment.END,
+                            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                        ),
+                ),
+            alignment=ft.alignment.bottom_left
+        )
+        page.overlay.append(self.sidebar)
         self.drawer = drawer
 
         self._load_presets()
@@ -216,7 +233,7 @@ class FletPresetManagerUI:
             title=ft.Text("Create Preset"),
             content=tf,
             actions=[
-                ft.TextButton("Cancel", on_click=lambda ev: setattr(dlg, "open", False)),
+                ft.TextButton("Cancel", on_click=lambda ev: self.page.close(dlg)),
                 ft.ElevatedButton("OK", on_click=on_ok),
             ],
             actions_alignment=ft.MainAxisAlignment.END,
