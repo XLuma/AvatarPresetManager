@@ -91,8 +91,8 @@ class FletPresetManagerUI:
             content=ft.Container(
                 content=ft.Column(
                             controls=[
-                                ft.IconButton(ft.Icons.INFO, on_click=lambda e: print("about")),
                                 ft.IconButton(ft.Icons.SETTINGS, on_click=lambda e: print("settings")),
+                                ft.IconButton(ft.Icons.INFO, on_click=lambda e: print("about")),
                             ],
                             spacing=0,
                             alignment=ft.MainAxisAlignment.END,
