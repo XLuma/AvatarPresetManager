@@ -26,7 +26,7 @@ class FletPresetManagerUI:
                 for avatar_id, presets in sorted(self.manager.presets.items())
             ]
         except Exception as exc:
-            print("Error loading presets:", exc)
+            self._notify(f'Failed to load presets: {exc}', 4000, "error")
             self._preset_items = []
     
     def _open_preset_location(self):
@@ -69,7 +69,6 @@ class FletPresetManagerUI:
 
     def _handle_sidebar(self, e: ft.ControlEvent):
         selected_index = e.control.selected_index
-        print(selected_index)
         actions = {
             0: self._open_presets,
            # 1: self._open_settings,      
@@ -77,7 +76,6 @@ class FletPresetManagerUI:
             2: self._open_about,
         }
         handler = actions.get(selected_index)
-        print(handler)
         self.page.close(self.drawer)
         handler()
         pass
@@ -103,7 +101,7 @@ class FletPresetManagerUI:
                         ft.TextButton(
                             "Delete all presets",
                             style=ft.ButtonStyle(color=ft.Colors.RED_400),
-                            on_click=lambda e: print("Delete all not implemented"),
+                            on_click=lambda e: self.page.open(ft.AlertDialog(title="Not implemented :(")),
                         ),
                     ]
                 )
@@ -245,20 +243,20 @@ class FletPresetManagerUI:
             #something here to wait a full two second
             self._notify(f'Preset {name} has been applied !',duration=2000, level="success")
         except Exception as exc:
-            print("Error applying:", exc)
+            self._notify(f'Failed to apply preset {name}: {exc}', 2000, "error")
     
     def _create_preset(self, name: str):
         try:
             return self.manager.save_avatar_state(name)
         except Exception as exc:
-            print("Error creating preset:", exc)
+            self._notify(f'Failed to create preset {name}: {exc}', 2000, "error")
 
     def _delete_preset(self, name: str):
         try:
             self.manager.delete_preset(name)
             self._refresh(self.page)
         except Exception as exc:
-            print("Error deleting preset:", exc)
+            self._notify(f'Failed to delete preset {name}: {exc}', 2000, "error")
 
     def _rename_preset(self, name: str):
         try:
