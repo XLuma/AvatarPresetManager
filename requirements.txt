@@ -1,7 +1,4 @@
 python-osc
 requests
-schedule
-pytimedinput
 zeroconf
 flet
-ttkbootstrap
