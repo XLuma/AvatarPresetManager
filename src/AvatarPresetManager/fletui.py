@@ -30,13 +30,61 @@ class FletPresetManagerUI:
         except Exception as exc:
             print("Error loading presets:", exc)
             self._preset_items = []
-
-    def _dismiss_sidebar(self, e):
-        self.drawer.selected_index =-1
-        self.page.close(self.drawer)
+    
+    def _open_preset_location(self):
+        os.startfile(str(self.manager.dataPath))
+    
+    def _open_settings(self):
+        self.page.controls.clear()
+        container = ft.Container(
+            content=ft.Column(controls=[
+                ft.Text("Settings"),
+            ]),
+            padding=ft.padding.all(10),
+            border_radius=8,
+            border=ft.border.all(1.5, ft.Colors.with_opacity(0.08, ft.Colors.ON_SURFACE)),
+        )
+        self.page.add(container)
+        self.page.update()
+        print("settings")
         pass
 
-    def _handle_sidebar(self, e):
+    def _open_about(self):
+        self.page.controls.clear()
+        container = ft.Container(content=ft.Column(
+            controls=[
+                ft.Text("Avatar Preset Manager is a tool that allows you to save an avatar's state in its entirery, and restore that state at any time while playing VRChat."),
+                ft.Text("If you like this project, consider supporting me and the development of this tool by buying a license here: link"),
+                ft.Text("Source code to this project can be found here: github link"),
+                ft.Text("Need help ? Join our Discord for support: discord link"),
+                ft.Text("This project is not affiliated with VRChat."),
+                ft.Text("Author: XLuma"),
+                ]
+            ),
+            padding=ft.padding.all(16)
+        )
+        self.page.add(container)
+        print("About")
+        pass
+
+    def _open_presets(self):
+        self.page.controls.clear()
+        self._refresh(self.page)
+
+    def _handle_sidebar(self, e: ft.ControlEvent):
+        selected_index = e.control.selected_index
+        print(selected_index)
+        actions = {
+            # If you add “top” nav items, adjust indices accordingly
+            0: self._open_presets,
+           # 1: self._open_settings,      
+            1: self._open_preset_location,
+            2: self._open_about,
+        }
+        handler = actions.get(selected_index)
+        print(handler)
+        self.page.close(self.drawer)
+        handler()
         pass
 
     def mount(self, page: ft.Page):
@@ -47,14 +95,17 @@ class FletPresetManagerUI:
         # Sidebar, unused but we keep it for now
         drawer = ft.NavigationDrawer(
             controls=[
-                ft.Container(height=16),
-                ft.NavigationDrawerDestination(icon=ft.Icons.SETTINGS, label="Settings"),
-                ft.Container(height=6),
+                ft.Divider(),
+                ft.NavigationDrawerDestination(icon=ft.Icons.PERSON, label="Presets"),
+                ft.Divider(),
+                ft.NavigationDrawerDestination(icon=ft.Icons.FOLDER, label="Open presets location"),
+                ft.Divider(),
                 ft.NavigationDrawerDestination(icon=ft.Icons.INFO, label="About"),
             ],
-            selected_index=-1,
-            on_dismiss=self._dismiss_sidebar
+            selected_index=0,
+            on_change=self._handle_sidebar
         )
+        self.drawer = drawer
 
         self.status_chip = ft.Container(
             padding=ft.padding.symmetric(6, 8),
@@ -71,7 +122,7 @@ class FletPresetManagerUI:
         )
 
         page.appbar = ft.AppBar(
-            #leading=ft.IconButton(ft.Icons.MENU, on_click=lambda e: page.open(drawer)),
+            leading=ft.IconButton(ft.Icons.MENU, on_click=lambda e: page.open(drawer)),
             title=ft.Container(
                 content=ft.Row(
                     [
@@ -87,22 +138,6 @@ class FletPresetManagerUI:
                 ft.TextButton("Close with logs", on_click=lambda e: self._force_quit())
             ],
         )
-        self.sidebar =ft.Container(
-            content=ft.Container(
-                content=ft.Column(
-                            controls=[
-                                ft.IconButton(ft.Icons.SETTINGS, on_click=lambda e: print("settings")),
-                                ft.IconButton(ft.Icons.INFO, on_click=lambda e: print("about")),
-                            ],
-                            spacing=0,
-                            alignment=ft.MainAxisAlignment.END,
-                            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                        ),
-                ),
-            alignment=ft.alignment.bottom_left
-        )
-        page.overlay.append(self.sidebar)
-        self.drawer = drawer
 
         self._load_presets()
         self._render_main(page)
@@ -132,7 +167,6 @@ class FletPresetManagerUI:
             border_radius=8,
             content=ft.ExpansionTile(
                 title=ft.Text(avatar_id),
-                #collapsed_bgcolor=ft.Colors.with_opacity(0.03, ft.Colors.ON_SURFACE),
                 shape=ft.RoundedRectangleBorder(radius=5),
                 collapsed_shape=ft.RoundedRectangleBorder(radius=5),
                 
@@ -140,11 +174,9 @@ class FletPresetManagerUI:
                     ft.Container(
                         padding=ft.padding.all(12),
                         border=ft.border.only(top=ft.BorderSide(1.5, ft.Colors.with_opacity(0.08, ft.Colors.ON_SURFACE))),
-                        #border_radius=ft.border_radius.only(0,0,8,8),
                         bgcolor=ft.Colors.with_opacity(0.03, ft.Colors.ON_SURFACE),
                         content=ft.Column(
                             [
-                                #ft.Container(height=6),
                                 ft.Column(
                                     [
                                         ft.Row(
