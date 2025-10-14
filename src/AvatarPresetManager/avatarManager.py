@@ -43,11 +43,6 @@ class AvatarManager():
         print(self.presets)
         return self.preset_nums
     
-    def read_config(self):
-        config_path = self.dataPath / "config.json"
-        with config_path.open("r", encoding="utf-8") as file:
-            return json.load(file)
-    
     def save_avatar_state(self, presetName: str):
         avatarId = self.vrcclient.get_avatar_id()
         avatarState = self.vrcclient.get_avatar_params()
@@ -57,6 +52,7 @@ class AvatarManager():
         path.mkdir(parents=True, exist_ok=True)
         presetPath = path / f"{presetName}.json"
         presetPath.write_text(json.dumps(preset.to_dict(), indent=2))
+        return preset
     
     def save_avatar_state_from_preset(self, preset: AvatarPreset):
         self.presets.setdefault(preset.avatarId, {})[preset.name] = preset

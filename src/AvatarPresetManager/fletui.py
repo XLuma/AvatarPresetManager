@@ -46,7 +46,6 @@ class FletPresetManagerUI:
         )
         self.page.add(container)
         self.page.update()
-        print("settings")
         pass
 
     def _open_about(self):
@@ -114,7 +113,6 @@ class FletPresetManagerUI:
         )
         # put them on top of everything
         self.page.open(ctx_menu)
-        print("hello")
         pass
     def mount(self, page: ft.Page):
         self.page = page
@@ -161,7 +159,7 @@ class FletPresetManagerUI:
                 )
             ),
             actions=[
-                ft.TextButton("Create Preset", on_click=self._on_create),
+                ft.TextButton("Create Preset", on_click=lambda e: self._handle_new_avatar()),
                 ft.TextButton("Refresh", on_click=lambda e: self._refresh(page)),
             ],
         )
@@ -229,17 +227,6 @@ class FletPresetManagerUI:
             ) 
         )
     
-    def _render_main(self, page: ft.Page):
-        tiles = [self._avatar_tile(aid, presets) for aid, presets in self._preset_items]
-        list_view = ft.ListView(controls=tiles, spacing=6, padding=10, auto_scroll=False)
-        page.controls.clear()
-        page.add(list_view)
-        page.update()
-
-    def _refresh(self, page: ft.Page):
-        self._load_presets()
-        self._render_main(page)
-
     # ----- Actions -----
     def _notify(self, msg: str, duration: int, level: str = "info"):
         if not self.page:
@@ -261,10 +248,10 @@ class FletPresetManagerUI:
             self._notify(f'Preset {name} has been applied !',duration=2000, level="success")
         except Exception as exc:
             print("Error applying:", exc)
-
+    
     def _create_preset(self, name: str):
         try:
-            self.manager.save_avatar_state(name)
+            return self.manager.save_avatar_state(name)
         except Exception as exc:
             print("Error creating preset:", exc)
 
@@ -307,17 +294,51 @@ class FletPresetManagerUI:
         except Exception as exc:
             self._notify(f'Failed to rename preset {name}: {exc}', 2000, "error")
 
-    def _on_create(self, e):
-        # Simple textfield dialog for preset name
-        tf = ft.TextField(label="Preset name", autofocus=True)
+    def _handle_new_avatar(self):
+        avatar_id = self.manager.vrcclient.get_avatar_id()
+        nameInput = ft.TextField(
+            label="Associate a name",
+            max_length=30
+        )
+        def on_ok(ev):
+            val = nameInput.value
+            if val and val != "":
+                self.manager.settings.associate_name_to_avatar(val, avatar_id)
+            #ctx_menu.open = False
+            self.page.close(ctx_menu)
+            self._on_create()
 
+        ctx_menu = ft.AlertDialog(
+            title="New avatar detected !",
+            actions=[
+                ft.Column(
+                    controls=[
+                        ft.Text(f'A new avatar was detected !\nYou can associate a name to the ID, which will be displayed in place.\nLeave empty to display the avatar id.', text_align=ft.TextAlign.LEFT),
+                        ft.Container(height=4),
+                        nameInput,
+                        ft.Container(height=2),
+                        ft.Row(
+                            controls=[
+                                ft.TextButton("Cancel", on_click=lambda ev: self.page.close(ctx_menu)),
+                                ft.ElevatedButton("Save", on_click=on_ok),
+                            ],
+                        )
+                    ]
+                ),
+            ]
+        )
+        if self.manager.presets.get(avatar_id) == None:
+            self.page.open(ctx_menu)
+    
+    def _on_create(self):
+        tf = ft.TextField(label="Preset name", autofocus=True)
         def on_ok(ev):
             val = (tf.value or "").strip()
             if val:
                 self._create_preset(val)
             dlg.open = False
-            e.page.update()
-            self._refresh(e.page)
+            self.page.update()
+            self._refresh(self.page)
 
         dlg = ft.AlertDialog(
             modal=True,
@@ -333,10 +354,18 @@ class FletPresetManagerUI:
     
     def _on_program_close(self, e: ft.AppLifecycleStateChangeEvent):
         if e.state == ft.AppLifecycleState.HIDE or e.state == ft.AppLifecycleState.DETACH:
-            print("Program close")  
             self.manager.save_settings()
-    
 
+    def _render_main(self, page: ft.Page):
+        tiles = [self._avatar_tile(aid, presets) for aid, presets in self._preset_items]
+        list_view = ft.ListView(controls=tiles, spacing=6, padding=10, auto_scroll=False)
+        page.controls.clear()
+        page.add(list_view)
+        page.update()
+
+    def _refresh(self, page: ft.Page):
+        self._load_presets()
+        self._render_main(page)
 
 # -------- entrypoint --------
     def run(self, page: ft.Page):
