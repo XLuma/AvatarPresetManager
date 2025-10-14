@@ -2,7 +2,7 @@ from typing import Dict
 from pathlib import Path
 
 class Settings():
-    def __init__(self):
+    def __init__(self, isLightMode, avatarIdAssociations):
         self.blacklistIndividual = [
             "TrackingTypeProxy",
             "CgeSmiling",
@@ -46,18 +46,17 @@ class Settings():
             "VFH",
             "VF_"
         ]
-        self.avatarIdAssociations = {} #"avId": userProvidedName
-        self.isLightMode: bool = False
+        self.avatarIdAssociations = avatarIdAssociations #"avId": userProvidedName
+        self.isLightMode: bool = isLightMode
         pass
-    def from_dict():
-        pass
+    def from_dict(d: dict) -> "Settings":
+        return Settings(isLightMode=d["isLightMode"], avatarIdAssociations=d["avatarIdAssociations"])
 
-    def to_dict():
-        pass
+    def to_dict(self):
+        return {"isLightMode": self.isLightMode, "avatarIdAssociations": self.avatarIdAssociations}
 
     def associate_name_to_avatar(self, name: str, avatar_id: str):
         self.avatarIdAssociations[avatar_id] = name
-        print(self.avatarIdAssociations)
     
     def get_name_for_avatar(self, avatar_id: str) -> str:
         name = self.avatarIdAssociations.get(avatar_id)

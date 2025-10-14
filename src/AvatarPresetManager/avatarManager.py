@@ -1,6 +1,7 @@
 import json
 import os
 import time
+import copy
 from typing import Dict
 from pathlib import Path
 from AvatarPresetManager.avatarPreset import AvatarPreset
@@ -9,13 +10,13 @@ from AvatarPresetManager.settings import Settings
 
 class AvatarManager():
     def __init__(self, client: VRCClient):
-        self.settings = Settings()
+        self.dataPath = Path(os.getenv("FLET_APP_STORAGE_DATA"))
+        self.settings = self.load_settings()
         self.blacklistIndividual: list[str] = self.settings.blacklistIndividual
         self.blacklistPartial: list[str] = self.settings.blacklistPartial
         self.presets: Dict[str, Dict[str, AvatarPreset]] = {}
         self.vrcclient = client
         self.preset_nums = 0
-        self.dataPath = Path(os.getenv("FLET_APP_STORAGE_DATA"))
         pass
 
     def parse_existing_presets(self) -> int:
@@ -46,17 +47,23 @@ class AvatarManager():
         config_path = self.dataPath / "config.json"
         with config_path.open("r", encoding="utf-8") as file:
             return json.load(file)
-        
+    
     def save_avatar_state(self, presetName: str):
         avatarId = self.vrcclient.get_avatar_id()
         avatarState = self.vrcclient.get_avatar_params()
         preset = AvatarPreset(presetName, avatarId, avatarState)
         self.presets.setdefault(avatarId, {})[presetName] = preset
-        path = Path.cwd() / "presets" / avatarId
+        path = self.dataPath / "presets" / avatarId
         path.mkdir(parents=True, exist_ok=True)
         presetPath = path / f"{presetName}.json"
         presetPath.write_text(json.dumps(preset.to_dict(), indent=2))
-        pass
+    
+    def save_avatar_state_from_preset(self, preset: AvatarPreset):
+        self.presets.setdefault(preset.avatarId, {})[preset.name] = preset
+        path = self.dataPath / "presets" / preset.avatarId
+        path.mkdir(parents=True, exist_ok=True)
+        presetPath = path / f"{preset.name}.json"
+        presetPath.write_text(json.dumps(preset.to_dict(), indent=2))
 
     def is_in_partial_blacklist(self, paramName: str) -> bool:
         for fix in self.blacklistPartial:
@@ -64,7 +71,7 @@ class AvatarManager():
                 return True
         return False
     
-    def find_avatar_preset(self, presetName: str, avatarId: str) -> AvatarPreset: #Ideally here, we throw an error if not found and we handle that properly.
+    def find_avatar_preset(self, presetName: str) -> AvatarPreset: #Ideally here, we throw an error if not found and we handle that properly.
         ##figure out overloads for avId or whatever
         for avatarId, presets in self.presets.items():
             for savedPresetName, preset in presets.items():
@@ -73,7 +80,7 @@ class AvatarManager():
         raise Exception()
     
     def delete_preset(self, presetName: str) -> bool:
-        preset = self.find_avatar_preset(presetName=presetName, avatarId="")
+        preset = self.find_avatar_preset(presetName)
         if not preset.name: 
             raise Exception()
         path = self.dataPath / "presets" / preset.avatarId / f"{preset.name}.json"
@@ -85,7 +92,7 @@ class AvatarManager():
     
     def apply_avatar_state(self, presetName: str):
         currentAvatarId = self.vrcclient.get_avatar_id()
-        preset = self.find_avatar_preset(presetName=presetName, avatarId="")
+        preset = self.find_avatar_preset(presetName)
         if currentAvatarId != preset.avatarId:
             self.vrcclient.change_avatar(preset.avatarId)
             self.vrcclient.wait_for_avatar_ready(min_params=1) #this is absolutely necessary because the game often sends back avatar id very early
@@ -94,3 +101,22 @@ class AvatarManager():
             if param.name not in self.blacklistIndividual and not self.is_in_partial_blacklist(param.rawName):
                 self.vrcclient.send_param_change(param.path, param.value)
         pass
+    
+    def rename_preset(self, presetName: str, newPresetName: str):
+        preset = copy.deepcopy(self.find_avatar_preset(presetName))
+        self.delete_preset(presetName)
+        preset.name=newPresetName
+        self.save_avatar_state_from_preset(preset)
+
+    def save_settings(self):
+        path = self.dataPath / "settings.json"
+        settings = self.settings.to_dict()
+        print(settings)
+        path.write_text(json.dumps(self.settings.to_dict(), indent=2))
+    
+    def load_settings(self) -> Settings | None:
+        path = self.dataPath / "settings.json"
+        if not path.exists():
+            return Settings(False, {})
+        with path.open() as file:
+            return Settings.from_dict(json.load(file))

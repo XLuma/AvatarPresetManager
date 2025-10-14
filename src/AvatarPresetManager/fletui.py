@@ -101,6 +101,7 @@ class FletPresetManagerUI:
                         ft.TextField(
                             value=current_name,
                             label="Associate a name",
+                            max_length=30,
                             on_blur=lambda e: self._handle_avatar_rename(e.control.value, avatar_id)
                         ),
                         ft.TextButton(
@@ -207,6 +208,7 @@ class FletPresetManagerUI:
                                                 [
                                                     ft.Text(p, expand=True),
                                                     ft.TextButton("Apply", on_click=lambda e, n=p: self._apply_preset(n)),
+                                                    ft.TextButton("Rename", on_click=lambda e, n=p: self._rename_preset(n)),
                                                     ft.TextButton(
                                                         "Delete",
                                                         style=ft.ButtonStyle(color=ft.Colors.RED_400),
@@ -224,7 +226,7 @@ class FletPresetManagerUI:
                         )
                     ],
                 ),
-                on_secondary_tap_up=lambda e: self._show_avatar_menu(avatar_id=avatar_id, e=e)
+                on_long_press_end=lambda e: self._show_avatar_menu(avatar_id=avatar_id, e=e)
             ) 
         )
     
@@ -253,7 +255,7 @@ class FletPresetManagerUI:
 
     def _apply_preset(self, name: str):
         try:
-            preset = self.manager.find_avatar_preset(presetName=name, avatarId="")
+            preset = self.manager.find_avatar_preset(name)
             self._notify(f'Applying preset {name} to avatar with id {preset.avatarId}', duration=2000)
             self.manager.apply_avatar_state(name)
             #something here to wait a full two second
@@ -274,6 +276,36 @@ class FletPresetManagerUI:
         except Exception as exc:
             print("Error deleting preset:", exc)
 
+    def _rename_preset(self, name: str):
+        nameInput = ft.TextField(
+            label="Enter a name",
+            max_length=30,
+        )
+        def on_save(ev: ft.ControlEvent):
+            print("name value", nameInput.value)
+            val = nameInput.value
+            if val and val != "":
+                print("renamig preset")
+                self.manager.rename_preset(name, val)
+            self.page.close(ctx_menu)
+            self._refresh(self.page)
+
+        ctx_menu = ft.AlertDialog(
+        title="Rename preset",
+        modal=True,
+        actions=[
+            nameInput,
+            ft.Container(height=6),
+            ft.Row(
+                controls= [
+                        ft.TextButton("Cancel", on_click=lambda e: self.page.close(ctx_menu)),
+                        ft.TextButton("Save", on_click=lambda ev: on_save(ev)),
+                    ]
+                ),
+            ]
+        )
+
+        self.page.open(ctx_menu)
     def _on_create(self, e):
         # Simple textfield dialog for preset name
         tf = ft.TextField(label="Preset name", autofocus=True)
@@ -297,9 +329,15 @@ class FletPresetManagerUI:
             actions_alignment=ft.MainAxisAlignment.END,
         )
         self.page.open(dlg)
+    
+    def _on_program_close(self, e: ft.AppLifecycleStateChangeEvent):
+        if e.state == ft.AppLifecycleState.HIDE or e.state == ft.AppLifecycleState.DETACH:
+            print("Program close")  
+            self.manager.save_settings()
+    
 
 
 # -------- entrypoint --------
-    def run(self, page):
+    def run(self, page: ft.Page):
         self.mount(page)
-
+        page.on_app_lifecycle_state_change = self._on_program_close

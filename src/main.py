@@ -13,9 +13,7 @@ def main(page: ft.Page):
     stop_evt = threading.Event()
     def discovery_worker():
         oscq = OscQueryDiscovery()
-        
         last_state = None
-
         while not stop_evt.is_set():
             found = oscq.wait(2)
             if found and last_state is not True:
@@ -43,3 +41,4 @@ def main(page: ft.Page):
 
 if __name__ == "__main__":
     ft.app(target=main, view=ft.AppView.FLET_APP)
+    
