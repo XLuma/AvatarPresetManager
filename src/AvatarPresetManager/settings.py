@@ -51,6 +51,15 @@ class Settings():
         pass
     def from_dict():
         pass
+    
     def to_dict():
         pass
+
+    def associate_name_to_avatar(self, name: str, avatar_id: str):
+        self.avatarIdAssociations[avatar_id] = name
+    
+    def get_name_for_avatar(self, avatar_id: str) -> str:
+        name = self.avatarIdAssociations.get(avatar_id)
+        if not name: return ""
+        return name
     

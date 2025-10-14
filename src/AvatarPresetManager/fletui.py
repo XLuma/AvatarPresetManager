@@ -75,7 +75,6 @@ class FletPresetManagerUI:
         selected_index = e.control.selected_index
         print(selected_index)
         actions = {
-            # If you add “top” nav items, adjust indices accordingly
             0: self._open_presets,
            # 1: self._open_settings,      
             1: self._open_preset_location,
@@ -92,7 +91,6 @@ class FletPresetManagerUI:
         page.title = "Avatar Preset Manager"
         page.theme_mode = ft.ThemeMode.DARK
 
-        # Sidebar, unused but we keep it for now
         drawer = ft.NavigationDrawer(
             controls=[
                 ft.Divider(),
@@ -135,16 +133,11 @@ class FletPresetManagerUI:
             actions=[
                 ft.TextButton("Create Preset", on_click=self._on_create),
                 ft.TextButton("Refresh", on_click=lambda e: self._refresh(page)),
-                ft.TextButton("Close with logs", on_click=lambda e: self._force_quit())
             ],
         )
 
         self._load_presets()
         self._render_main(page)
-
-    def _force_quit(self):
-        self.page.window.destroy()
-        sys.exit(100)
 
     def set_vrchat_online(self, is_online: bool, ip: str | None = None, port: int | None = None):
         self.vrchat_online = is_online
@@ -165,41 +158,43 @@ class FletPresetManagerUI:
         return ft.Container(
             border=ft.border.all(1.5, ft.Colors.with_opacity(0.08, ft.Colors.ON_SURFACE)),
             border_radius=8,
-            content=ft.ExpansionTile(
-                title=ft.Text(avatar_id),
-                shape=ft.RoundedRectangleBorder(radius=5),
-                collapsed_shape=ft.RoundedRectangleBorder(radius=5),
-                
-                controls=[
-                    ft.Container(
-                        padding=ft.padding.all(12),
-                        border=ft.border.only(top=ft.BorderSide(1.5, ft.Colors.with_opacity(0.08, ft.Colors.ON_SURFACE))),
-                        bgcolor=ft.Colors.with_opacity(0.03, ft.Colors.ON_SURFACE),
-                        content=ft.Column(
-                            [
-                                ft.Column(
-                                    [
-                                        ft.Row(
-                                            [
-                                                ft.Text(p, expand=True),
-                                                ft.TextButton("Apply", on_click=lambda e, n=p: self._apply_preset(n)),
-                                                ft.TextButton(
-                                                    "Delete",
-                                                    style=ft.ButtonStyle(color=ft.Colors.RED_400),
-                                                    on_click=lambda e, n=p: self._delete_preset(n),
-                                                ),
-                                            ],
-                                        )
-                                        for p in presets
-                                    ],
-                                    spacing=4,
-                                ),
-                            ],
-                            spacing=10,
-                        ),
-                    )
-                ],
-            )
+            content=ft.GestureDetector(
+                    content=ft.ExpansionTile(
+                    title=ft.Text(avatar_id),
+                    shape=ft.RoundedRectangleBorder(radius=5),
+                    collapsed_shape=ft.RoundedRectangleBorder(radius=5),               
+                    controls=[
+                        ft.Container(
+                            padding=ft.padding.all(12),
+                            border=ft.border.only(top=ft.BorderSide(1.5, ft.Colors.with_opacity(0.08, ft.Colors.ON_SURFACE))),
+                            bgcolor=ft.Colors.with_opacity(0.03, ft.Colors.ON_SURFACE),
+                            content=ft.Column(
+                                [
+                                    ft.Column(
+                                        [
+                                            ft.Row(
+                                                [
+                                                    ft.Text(p, expand=True),
+                                                    ft.TextButton("Apply", on_click=lambda e, n=p: self._apply_preset(n)),
+                                                    ft.TextButton(
+                                                        "Delete",
+                                                        style=ft.ButtonStyle(color=ft.Colors.RED_400),
+                                                        on_click=lambda e, n=p: self._delete_preset(n),
+                                                    ),
+                                                ],
+                                            )
+                                            for p in presets
+                                        ],
+                                        spacing=4,
+                                    ),
+                                ],
+                                spacing=10,
+                            ),
+                        )
+                    ],
+                ),
+                on_secondary_tap_up=lambda e: print(avatar_id)
+            ) 
         )
     
     def _render_main(self, page: ft.Page):
