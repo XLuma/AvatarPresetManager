@@ -64,7 +64,6 @@ class FletPresetManagerUI:
             padding=ft.padding.all(16)
         )
         self.page.add(container)
-        print("About")
         pass
 
     def _open_presets(self):
@@ -277,35 +276,37 @@ class FletPresetManagerUI:
             print("Error deleting preset:", exc)
 
     def _rename_preset(self, name: str):
-        nameInput = ft.TextField(
-            label="Enter a name",
-            max_length=30,
-        )
-        def on_save(ev: ft.ControlEvent):
-            print("name value", nameInput.value)
-            val = nameInput.value
-            if val and val != "":
-                print("renamig preset")
-                self.manager.rename_preset(name, val)
-            self.page.close(ctx_menu)
-            self._refresh(self.page)
+        try:
+            nameInput = ft.TextField(
+                label="Enter a name",
+                max_length=30,
+            )
+            def on_save(ev: ft.ControlEvent):
+                val = nameInput.value
+                if val and val != "":
+                    self.manager.rename_preset(name, val)
+                self.page.close(ctx_menu)
+                self._refresh(self.page)
 
-        ctx_menu = ft.AlertDialog(
-        title="Rename preset",
-        modal=True,
-        actions=[
-            nameInput,
-            ft.Container(height=6),
-            ft.Row(
-                controls= [
-                        ft.TextButton("Cancel", on_click=lambda e: self.page.close(ctx_menu)),
-                        ft.TextButton("Save", on_click=lambda ev: on_save(ev)),
-                    ]
-                ),
-            ]
-        )
+            ctx_menu = ft.AlertDialog(
+            title="Rename preset",
+            modal=True,
+            actions=[
+                nameInput,
+                ft.Container(height=6),
+                ft.Row(
+                    controls= [
+                            ft.TextButton("Cancel", on_click=lambda e: self.page.close(ctx_menu)),
+                            ft.TextButton("Save", on_click=lambda ev: on_save(ev)),
+                        ]
+                    ),
+                ]
+            )
 
-        self.page.open(ctx_menu)
+            self.page.open(ctx_menu)
+        except Exception as exc:
+            self._notify(f'Failed to rename preset {name}: {exc}', 2000, "error")
+
     def _on_create(self, e):
         # Simple textfield dialog for preset name
         tf = ft.TextField(label="Preset name", autofocus=True)
