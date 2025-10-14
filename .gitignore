@@ -8,3 +8,4 @@ presets/
 *.xml
 build/
 dist/
+storage/
