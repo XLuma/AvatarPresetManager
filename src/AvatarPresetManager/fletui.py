@@ -1,10 +1,8 @@
 # flet_preset_manager.py
 from __future__ import annotations
-import sys
 from typing import List, Tuple
 import flet as ft
 from AvatarPresetManager.avatarManager import AvatarManager
-from pathlib import Path
 import os
 
 class FletPresetManagerUI:

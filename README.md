@@ -2,10 +2,11 @@
 This piece of software allows you to create snapshots of your avatar state, and restore it at any moment. It uses VRChat OSC to function.
 
 ## TODO
-- When a preset is created, if the avatar doesnt exist yet, prompt user for a name
 - Write how to use guide in info page and in repo
+- Proper error handling
+- FUCKIN UI CODE CLEANUP
+- Logging ???
 - Updater program
-- Localization system
 - Pink theme (JUST FOR SHY NOT FOR PUBLIC USE)
 
 ## Known issues
