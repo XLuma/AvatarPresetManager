@@ -3,8 +3,10 @@ This piece of software allows you to create snapshots of your avatar state, and 
 
 ## TODO
 - Add rename feature (preset names, avatar id association)
+- Implement settings object serialization/deserialization
+- When a preset is created, if the avatar doesnt exist yet, prompt user for a name
 - Updater program
-- Python code cleanup
+- Localization system
 
 ## Known issues
 - Switching into an avatar only works if that avatar is favorited. [This is due to a VRChat bug](`https://feedback.vrchat.com/avatar-30/p/1626-osc-avatar-change-is-not-working`)

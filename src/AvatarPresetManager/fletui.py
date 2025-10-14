@@ -85,7 +85,37 @@ class FletPresetManagerUI:
         self.page.close(self.drawer)
         handler()
         pass
+    
+    def _handle_avatar_rename(self, avatar_name: str, avatar_id: str):
+        self.manager.settings.associate_name_to_avatar(avatar_name, avatar_id)
+        self._refresh(self.page)
 
+    def _show_avatar_menu(self, avatar_id, e: ft.TapEvent):
+        current_name = self.manager.settings.get_name_for_avatar(avatar_id)
+        ctx_menu = ft.AlertDialog(
+            title="Parent configuration",
+            actions=[
+                ft.Column(
+                    controls=[
+                        ft.Text(f'Targeting avatar id {avatar_id}'),
+                        ft.TextField(
+                            value=current_name,
+                            label="Associate a name",
+                            on_blur=lambda e: self._handle_avatar_rename(e.control.value, avatar_id)
+                        ),
+                        ft.TextButton(
+                            "Delete all presets",
+                            style=ft.ButtonStyle(color=ft.Colors.RED_400),
+                            on_click=lambda e: print("Delete all not implemented"),
+                        ),
+                    ]
+                )
+            ]
+        )
+        # put them on top of everything
+        self.page.open(ctx_menu)
+        print("hello")
+        pass
     def mount(self, page: ft.Page):
         self.page = page
         page.title = "Avatar Preset Manager"
@@ -155,12 +185,13 @@ class FletPresetManagerUI:
         self.page.update()
 
     def _avatar_tile(self, avatar_id: str, presets: list[str]) -> ft.ExpansionTile:
+        avatar_name = self.manager.settings.get_name_for_avatar(avatar_id)
         return ft.Container(
             border=ft.border.all(1.5, ft.Colors.with_opacity(0.08, ft.Colors.ON_SURFACE)),
             border_radius=8,
             content=ft.GestureDetector(
                     content=ft.ExpansionTile(
-                    title=ft.Text(avatar_id),
+                    title=ft.Text(avatar_name if avatar_name != "" else avatar_id),
                     shape=ft.RoundedRectangleBorder(radius=5),
                     collapsed_shape=ft.RoundedRectangleBorder(radius=5),               
                     controls=[
@@ -193,7 +224,7 @@ class FletPresetManagerUI:
                         )
                     ],
                 ),
-                on_secondary_tap_up=lambda e: print(avatar_id)
+                on_secondary_tap_up=lambda e: self._show_avatar_menu(avatar_id=avatar_id, e=e)
             ) 
         )
     

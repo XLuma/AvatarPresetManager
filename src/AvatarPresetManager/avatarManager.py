@@ -9,9 +9,9 @@ from AvatarPresetManager.settings import Settings
 
 class AvatarManager():
     def __init__(self, client: VRCClient):
-        config = Settings()
-        self.blacklistIndividual: list[str] = config.blacklistIndividual
-        self.blacklistPartial: list[str] = config.blacklistPartial
+        self.settings = Settings()
+        self.blacklistIndividual: list[str] = self.settings.blacklistIndividual
+        self.blacklistPartial: list[str] = self.settings.blacklistPartial
         self.presets: Dict[str, Dict[str, AvatarPreset]] = {}
         self.vrcclient = client
         self.preset_nums = 0
