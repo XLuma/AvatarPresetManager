@@ -11,11 +11,12 @@ This piece of software allows you to create snapshots of your avatar state, and 
 
 ## TODO
 - Write how to use guide in info page and in repo
-- Proper error handling
-- FUCKIN UI CODE CLEANUP
 - Logging ???
 - Updater program
-- Pink theme (JUST FOR SHY NOT FOR PUBLIC USE)
+- Theming
+- User should be able to assign custom tags to avatars and then sort by said tags
+- User should be able to assign a custom icon to an avatar ID displayed on the right of it
+- Program name is not FitCheck
 
 ## Known issues
 - Switching into an avatar only works if that avatar is favorited. [This is due to a VRChat bug](`https://feedback.vrchat.com/avatar-30/p/1626-osc-avatar-change-is-not-working`)

@@ -50,7 +50,7 @@ class FletPresetManagerUI:
         self.page.controls.clear()
         container = ft.Container(content=ft.Column(
             controls=[
-                ft.Text("Avatar Preset Manager is a tool that allows you to save an avatar's state in its entirery, and restore that state at any time while playing VRChat."),
+                ft.Text("FitCheck is a tool that allows you to save an avatar's state in its entirery, and restore that state at any time while playing VRChat."),
                 ft.Text("If you like this project, consider supporting me and the development of this tool by buying a license here: link"),
                 ft.Text("Source code to this project can be found here: github link"),
                 ft.Text("Need help ? Join our Discord for support: discord link"),
@@ -112,7 +112,7 @@ class FletPresetManagerUI:
         pass
     def mount(self, page: ft.Page):
         self.page = page
-        page.title = "Avatar Preset Manager"
+        page.title = "FitCheck"
         page.theme_mode = ft.ThemeMode.DARK
 
         drawer = ft.NavigationDrawer(
@@ -148,7 +148,7 @@ class FletPresetManagerUI:
             title=ft.Container(
                 content=ft.Row(
                     [
-                        ft.Text("Avatar Preset Manager"), 
+                        ft.Text("FitCheck"), 
                         self.status_chip,
                     ], 
                     spacing=16
