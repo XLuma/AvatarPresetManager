@@ -50,12 +50,22 @@ class FletPresetManagerUI:
         self.page.controls.clear()
         container = ft.Container(content=ft.Column(
             controls=[
-                ft.Text("FitCheck is a tool that allows you to save an avatar's state in its entirery, and restore that state at any time while playing VRChat."),
-                ft.Text("If you like this project, consider supporting me and the development of this tool by buying a license here: link"),
-                ft.Text("Source code to this project can be found here: github link"),
-                ft.Text("Need help ? Join our Discord for support: discord link"),
-                ft.Text("This project is not affiliated with VRChat."),
-                ft.Text("Author: XLuma"),
+                    ft.Column(controls=[
+                        ft.Text("About FitCheck", theme_style=ft.TextThemeStyle.TITLE_LARGE),
+                        ft.Text("FitCheck is a tool that allows you to save an avatar's state in its entirery, and restore that state at any time while playing VRChat."),
+                        ft.Text("If you like this project, consider supporting me and the development of this tool by buying a license here: link"),
+                        ft.Text("Source code to this project can be found here: github link"),
+                        ft.Text("Need help ? Join our Discord for support: discord link"),
+                        ft.Text("This project is not affiliated with VRChat."),
+                        ft.Text("Author: XLuma"),
+                    ]),
+                    ft.Divider(),
+                    ft.Column(controls=[
+                        ft.Text("How to use FitCheck", theme_style=ft.TextThemeStyle.TITLE_LARGE),
+                        ft.Text("Use the Create Preset button to save your avatar."),
+                        ft.Text("Long-press the avatar ID to open a menu and assign a name in the interface."),
+                        ft.Text("Click an avatar to expand a list of available presets, and available options."),
+                    ])
                 ]
             ),
             padding=ft.padding.all(16)
