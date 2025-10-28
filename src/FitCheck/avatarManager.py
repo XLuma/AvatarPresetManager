@@ -4,9 +4,9 @@ import time
 import copy
 from typing import Dict
 from pathlib import Path
-from AvatarPresetManager.avatarPreset import AvatarPreset
-from AvatarPresetManager.vrcClient import VRCClient
-from AvatarPresetManager.settings import Settings
+from FitCheck.avatarPreset import AvatarPreset
+from FitCheck.vrcClient import VRCClient
+from FitCheck.settings import Settings
 
 class AvatarManager():
     def __init__(self, client: VRCClient):

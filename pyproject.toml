@@ -1,5 +1,5 @@
 [project]
-name = "AvatarPresetManager"
+name = "FitCheck"
 version = "1.0.0"
 description = ""
 readme = "README.md"
@@ -16,7 +16,7 @@ dependencies = [
 
 [tool.flet]
 org = "com.xluma"
-product = "AvatarPresetManager"
+product = "FitCheck"
 company = "XLuma"
 copyright = "Copyright (C) 2025 by XLuma"
 

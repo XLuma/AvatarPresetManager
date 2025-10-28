@@ -1,5 +1,5 @@
-### AvatarPresetManager
-This piece of software allows you to create snapshots of your avatar state, and restore it at any moment. It uses VRChat OSC to function.
+### FitCheck - An avatar preset manager
+FitCheck allows you to create snapshots of your avatar state, and restore it at any moment. It uses VRChat OSC to function.
 
 ## Features
 - Save an avatar state at any point
@@ -8,10 +8,7 @@ This piece of software allows you to create snapshots of your avatar state, and 
 - Associate a name to an avatar ID
 - Detects if VRChat is running in the background
 
-## Usage
-For a more in-depth guide, view [USAGE.md](/USAGE.md)
 ## TODO
-- Write how to use guide in info page and in repo
 - Updater program
 - Theming
 - User should be able to assign custom tags to avatars and then sort by said tags
@@ -19,7 +16,7 @@ For a more in-depth guide, view [USAGE.md](/USAGE.md)
 
 ## Known issues
 - Switching into an avatar only works if that avatar is favorited. [This is due to a VRChat bug](`https://feedback.vrchat.com/avatar-30/p/1626-osc-avatar-change-is-not-working`)
-- In specific instances with certaina avatars, presets wont apply/switching wont apply. Needs investigation.
+- In specific instances with certain avatars, presets wont apply/switching wont apply. Needs investigation.
 
 ## Contributing
 Contributions are very welcome. When submitting a PR, please make sure to outline very clearly the purpose of your pull request, and properly test the program to make sure current functionalities work with your feature.

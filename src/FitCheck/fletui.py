@@ -2,7 +2,7 @@
 from __future__ import annotations
 from typing import List, Tuple
 import flet as ft
-from AvatarPresetManager.avatarManager import AvatarManager
+from FitCheck.avatarManager import AvatarManager
 import os
 
 class FletPresetManagerUI:
@@ -54,10 +54,9 @@ class FletPresetManagerUI:
                         ft.Text("About FitCheck", theme_style=ft.TextThemeStyle.TITLE_LARGE),
                         ft.Text("FitCheck is a tool that allows you to save an avatar's state in its entirery, and restore that state at any time while playing VRChat."),
                         ft.Text("If you like this project, consider supporting me and the development of this tool by buying a license here: link"),
-                        ft.Text("Source code to this project can be found here: github link"),
-                        ft.Text("Need help ? Join our Discord for support: discord link"),
+                        ft.Text("Source code to this project can be found here: https://github.com/XLuma/AvatarPresetManager"),
                         ft.Text("This project is not affiliated with VRChat."),
-                        ft.Text("Author: XLuma"),
+                        ft.Text
                     ]),
                     ft.Divider(),
                     ft.Column(controls=[

@@ -1,10 +1,10 @@
 import sys
 import time
 import threading
-from AvatarPresetManager.oscq_discovery import OscQueryDiscovery
-from AvatarPresetManager.avatarManager import AvatarManager
-from AvatarPresetManager.vrcClient import VRCClient
-from AvatarPresetManager.fletui import FletPresetManagerUI
+from FitCheck.oscq_discovery import OscQueryDiscovery
+from FitCheck.avatarManager import AvatarManager
+from FitCheck.vrcClient import VRCClient
+from FitCheck.fletui import FletPresetManagerUI
 import flet as ft
 
 def main(page: ft.Page):

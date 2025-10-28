@@ -1,4 +1,4 @@
-from AvatarPresetManager.avatarParameter import AvatarParameter
+from FitCheck.avatarParameter import AvatarParameter
 
 class AvatarPreset():
     def __init__(self, name, avatarId, parameters):

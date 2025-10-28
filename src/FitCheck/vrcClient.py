@@ -1,5 +1,5 @@
 import requests
-from AvatarPresetManager.avatarParameter import AvatarParameter
+from FitCheck.avatarParameter import AvatarParameter
 from pythonosc.udp_client import SimpleUDPClient
 from pythonosc.dispatcher import Dispatcher
 from pythonosc.osc_server import BlockingOSCUDPServer
