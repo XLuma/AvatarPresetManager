@@ -17,7 +17,6 @@ FitCheck allows you to create snapshots of your avatar state, and restore it at 
 - (Eventually) UI Overhaul
 
 ## Known issues
-- Switching into an avatar only works if that avatar is favorited. [This is due to a VRChat bug](`https://feedback.vrchat.com/avatar-30/p/1626-osc-avatar-change-is-not-working`)
 - In specific instances with certain avatars, presets wont apply/switching wont apply. Needs investigation.
 
 ## Contributing
