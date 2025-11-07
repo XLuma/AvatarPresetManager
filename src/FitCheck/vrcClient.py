@@ -52,7 +52,7 @@ class VRCClient():
             param = AvatarParameter(paramName, p['path'], p['value'])
             paramList.append(param)
         return paramList
-    def wait_for_avatar_ready(self, timeout=25, min_params=25, quiet_ms=400, required_params=None):
+    def wait_for_avatar_ready(self, timeout=60, min_params=10, quiet_ms=400, required_params=None):
         """
         Wait for: /avatar/change -> enough distinct /avatar/parameters/*
         -> no *new* parameter names for quiet_ms.
