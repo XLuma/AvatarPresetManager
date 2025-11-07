@@ -56,7 +56,6 @@ class FletPresetManagerUI:
                         ft.Text("If you like this project, consider supporting me and the development of this tool by buying a license here: link"),
                         ft.Text("Source code to this project can be found here: https://github.com/XLuma/AvatarPresetManager"),
                         ft.Text("This project is not affiliated with VRChat."),
-                        ft.Text
                     ]),
                     ft.Divider(),
                     ft.Column(controls=[
