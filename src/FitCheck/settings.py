@@ -37,7 +37,8 @@ class Settings():
             "PreviewMode",
             "VRCEmote",
             "VRCFaceBlendH",
-            "VRCFaceBlendV"
+            "VRCFaceBlendV",
+            "VRMode"
         ]
         self.blacklistPartial = [
             "OGB",
