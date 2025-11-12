@@ -46,6 +46,7 @@ class Settings():
             "Go",
             "VFH",
             "VF_"
+            "FT/v2"
         ]
         self.avatarIdAssociations = avatarIdAssociations #"avId": userProvidedName
         self.isLightMode: bool = isLightMode
