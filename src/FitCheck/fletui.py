@@ -302,7 +302,6 @@ class FletPresetManagerUI:
             self._notify(f'Failed to rename preset {name}: {exc}', 2000, "error")
 
     def _handle_new_avatar(self):
-        print("hello")
         avatar_id = self.manager.vrcclient.get_avatar_id()
         nameInput = ft.TextField(
             label="Associate a name",
