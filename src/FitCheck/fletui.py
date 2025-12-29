@@ -123,6 +123,7 @@ class FletPresetManagerUI:
         self.page = page
         page.title = "FitCheck"
         page.theme_mode = ft.ThemeMode.DARK
+        #page.theme = ft.Theme(color_scheme_seed=ft.Colors.PINK)
 
         drawer = ft.NavigationDrawer(
             controls=[
