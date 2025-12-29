@@ -4,6 +4,7 @@ from typing import List, Tuple
 import flet as ft
 from FitCheck.avatarManager import AvatarManager
 import os
+from FitCheck.avatarPreset import AvatarPreset
 
 class FletPresetManagerUI:
     """Flet-based UI for managing avatar presets."""
@@ -208,12 +209,12 @@ class FletPresetManagerUI:
                                             ft.Row(
                                                 [
                                                     ft.Text(p, expand=True),
-                                                    ft.TextButton("Apply", on_click=lambda e, n=p: self._apply_preset(n)),
-                                                    ft.TextButton("Rename", on_click=lambda e, n=p: self._rename_preset(n)),
+                                                    ft.TextButton("Apply", on_click=lambda e, n=p, i=avatar_id: self._apply_preset(i, n)),
+                                                    ft.TextButton("Rename", on_click=lambda e, n=p, i=avatar_id: self._rename_preset(i, n)),
                                                     ft.TextButton(
                                                         "Delete",
                                                         style=ft.ButtonStyle(color=ft.Colors.RED_400),
-                                                        on_click=lambda e, n=p: self._delete_preset(n),
+                                                        on_click=lambda e, n=p, i=avatar_id: self._delete_preset(i, n),
                                                     ),
                                                 ],
                                             )
@@ -243,11 +244,12 @@ class FletPresetManagerUI:
         }.get(level, ft.Colors.BLUE_300)
         self.page.open(ft.SnackBar(ft.Text(msg), bgcolor=color, duration=duration))
 
-    def _apply_preset(self, name: str):
+    def _apply_preset(self, avatar_id: str, name: str):
         try:
-            preset = self.manager.find_avatar_preset(name)
+            preset: AvatarPreset = self.manager.find_avatar_preset(avatar_id, name)
             self._notify(f'Applying preset {name} to avatar with id {preset.avatarId}', duration=2000)
-            self.manager.apply_avatar_state(name)
+            self.manager.apply_avatar_state_by_preset(preset)
+            #self.manager.apply_avatar_state(name)
             #something here to wait a full two second
             self._notify(f'Preset {name} has been applied !',duration=2000, level="success")
         except Exception as exc:
@@ -259,14 +261,15 @@ class FletPresetManagerUI:
         except Exception as exc:
             self._notify(f'Failed to create preset {name}: {exc}', 2000, "error")
 
-    def _delete_preset(self, name: str):
+    def _delete_preset(self, avatar_id: str, name: str):
         try:
-            self.manager.delete_preset(name)
+            preset = self.manager.find_avatar_preset(avatar_id, name)
+            self.manager.delete_preset(preset)
             self._refresh(self.page)
         except Exception as exc:
             self._notify(f'Failed to delete preset {name}: {exc}', 2000, "error")
 
-    def _rename_preset(self, name: str):
+    def _rename_preset(self, avatar_id: str, name: str):
         try:
             nameInput = ft.TextField(
                 label="Enter a name",
@@ -275,7 +278,7 @@ class FletPresetManagerUI:
             def on_save(ev: ft.ControlEvent):
                 val = nameInput.value
                 if val and val != "":
-                    self.manager.rename_preset(name, val)
+                    self.manager.rename_preset(avatar_id, name, val)
                 self.page.close(ctx_menu)
                 self._refresh(self.page)
 

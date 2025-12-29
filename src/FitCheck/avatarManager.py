@@ -67,15 +67,13 @@ class AvatarManager():
                 return True
         return False
     
-    def find_avatar_preset(self, presetName: str) -> AvatarPreset: #Ideally here, we throw an error if not found and we handle that properly.
-        ##figure out overloads for avId or whatever
-        for avatarId, presets in self.presets.items():
-            for savedPresetName, preset in presets.items():
-                if presetName == savedPresetName:
-                    return preset
+    def find_avatar_preset(self, avatarId: str, presetName: str) -> AvatarPreset: #Ideally here, we throw an error if not found and we handle that properly.
+        if avatarId in self.presets:
+            if presetName in self.presets[avatarId]:
+                return self.presets[avatarId][presetName]
         raise Exception()
     
-    def delete_preset(self, presetName: str) -> bool:
+    def delete_preset_deprecated(self, presetName: str) -> bool:
         preset = self.find_avatar_preset(presetName)
         if not preset.name: 
             raise Exception()
@@ -84,6 +82,16 @@ class AvatarManager():
             raise Exception()
         path.unlink()
         del self.presets[preset.avatarId][presetName]
+        return True
+
+    def delete_preset(self, preset: AvatarPreset) -> bool:
+        if not preset.name: 
+            raise Exception()
+        path = self.dataPath / "presets" / preset.avatarId / f"{preset.name}.json"
+        if not path.is_file():
+            raise Exception()
+        path.unlink()
+        del self.presets[preset.avatarId][preset.name]
         return True
     
     def apply_avatar_state(self, presetName: str):
@@ -97,10 +105,21 @@ class AvatarManager():
             if param.name not in self.blacklistIndividual and not self.is_in_partial_blacklist(param.rawName):
                 self.vrcclient.send_param_change(param.path, param.value)
         pass
+
+    def apply_avatar_state_by_preset(self, preset: AvatarPreset):
+        currentAvatarId = self.vrcclient.get_avatar_id()
+        if currentAvatarId != preset.avatarId:
+            self.vrcclient.change_avatar(preset.avatarId)
+            self.vrcclient.wait_for_avatar_ready(min_params=1) #this is absolutely necessary because the game often sends back avatar id very early
+        self.vrcclient.get_root_node() # refresh avi data
+        for param in preset.parameters:
+            if param.name not in self.blacklistIndividual and not self.is_in_partial_blacklist(param.rawName):
+                self.vrcclient.send_param_change(param.path, param.value)
+        pass
     
-    def rename_preset(self, presetName: str, newPresetName: str):
-        preset = copy.deepcopy(self.find_avatar_preset(presetName))
-        self.delete_preset(presetName)
+    def rename_preset(self, avatarId: str, presetName: str, newPresetName: str):
+        preset = copy.deepcopy(self.find_avatar_preset(avatarId, presetName))
+        self.delete_preset(preset)
         preset.name=newPresetName
         self.save_avatar_state_from_preset(preset)
 
