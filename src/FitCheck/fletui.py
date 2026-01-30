@@ -368,7 +368,7 @@ class FletPresetManagerUI:
 
     def _render_main(self, page: ft.Page):
         tiles = [self._avatar_tile(aid, presets) for aid, presets in self._preset_items]
-        list_view = ft.ListView(controls=tiles, spacing=6, padding=10, auto_scroll=False)
+        list_view = ft.ListView(controls=tiles, spacing=6, padding=10, auto_scroll=False, expand=True)
         page.controls.clear()
         page.add(list_view)
         page.update()
